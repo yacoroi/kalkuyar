@@ -11,7 +11,7 @@ export default function Sidebar() {
         <div className="w-72 bg-white h-screen border-r border-gray-100 flex flex-col shadow-[4px_0_24px_rgba(0,0,0,0.02)] fixed left-0 top-0 z-50">
             {/* Brand */}
             <div className="p-8 pb-8 flex flex-col items-center">
-                <img src="/saadet-logo.png" alt="Saadet Saha" className="h-10 object-contain mb-2" />
+                <img src="/kalkuyar-logo.png" alt="KalkUyar" className="h-10 object-contain mb-2" />
                 <p className="text-xs text-gray-400 font-medium bg-gray-50 px-3 py-1 rounded-full border border-gray-100">Yönetim Paneli</p>
             </div>
 

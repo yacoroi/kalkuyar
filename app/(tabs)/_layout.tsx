@@ -77,7 +77,7 @@ export default function TabLayout() {
           title: 'Anasayfa',
           headerTitle: () => (
             <Image
-              source={require('../../assets/images/saadet-logo.png')}
+              source={require('../../assets/images/kalkuyar-logo.png')}
               style={{ width: 140, height: 40 }}
               resizeMode="contain"
             />

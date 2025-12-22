@@ -16,13 +16,13 @@ export default function Root({ children }: { children: React.ReactNode }) {
         <meta name="theme-color" content="#ea2a33" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="Saadet Saha" />
-        <meta name="description" content="Saadet Partisi Saha Uygulaması" />
+        <meta name="apple-mobile-web-app-title" content="KalkUyar" />
+        <meta name="description" content="KalkUyar Saha Uygulaması" />
 
         {/* PWA Manifest & Icons */}
         <link rel="manifest" href="/manifest.json" />
-        <link rel="apple-touch-icon" href="/assets/images/saadet-logo.png" />
-        <link rel="icon" type="image/png" href="/assets/images/saadet-logo.png" />
+        <link rel="apple-touch-icon" href="/assets/images/icon.png" />
+        <link rel="icon" type="image/png" href="/assets/images/icon.png" />
 
         {/* Disable body scrolling on web */}
         <ScrollViewStyleReset />

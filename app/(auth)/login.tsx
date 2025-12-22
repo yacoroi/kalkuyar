@@ -60,8 +60,8 @@ export default function LoginScreen() {
                     {/* LOGO */}
                     <View className="items-center justify-center mb-6 w-full">
                         <Image
-                            source={require('../../assets/images/saadet-logo.png')}
-                            style={{ width: 200, height: 50 }}
+                            source={require('../../assets/images/kalkuyar-logo.png')}
+                            style={{ width: 220, height: 60 }}
                             resizeMode="contain"
                         />
                     </View>

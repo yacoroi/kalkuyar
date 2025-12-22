@@ -50,7 +50,7 @@ export default function DesktopSidebar() {
                 {/* Logo */}
                 <View style={{ marginBottom: 32, paddingHorizontal: 8 }}>
                     <Image
-                        source={require('../assets/images/saadet-logo.png')}
+                        source={require('../assets/images/kalkuyar-logo.png')}
                         style={{ width: 160, height: 48 }}
                         resizeMode="contain"
                     />

@@ -6,7 +6,7 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Saadet Saha - Yönetim Paneli",
+  title: "KalkUyar - Yönetim Paneli",
   description: "Teşkilat Operasyon Yönetimi",
 };
 
