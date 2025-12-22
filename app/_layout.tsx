@@ -5,6 +5,7 @@ import { Stack, useRouter, useSegments } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
+import PwaInstallPrompt from '../components/PwaInstallPrompt';
 import '../global.css'; // Import NativeWind global styles
 import { supabase } from '../lib/supabase';
 import { useAuthStore } from '../stores/useAuthStore';
@@ -16,8 +17,6 @@ export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary
 } from 'expo-router';
-
-// ... lines 19-26 unchanged
 
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
@@ -38,6 +37,7 @@ function RootLayoutNav() {
             }}
           />
         </Stack>
+        <PwaInstallPrompt />
       </ThemeProvider>
     </SafeAreaProvider>
   );
