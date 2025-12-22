@@ -66,7 +66,7 @@ export default function LoginScreen() {
                         />
                     </View>
 
-                    <Text className="font-bold text-[#333333] mb-8" style={{ fontSize: scaleFont(24) }} allowFontScaling={false}>KalkUyar</Text>
+
 
                     {/* PHONE INPUT */}
                     <View className="w-full mb-6">
