@@ -27,7 +27,12 @@
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/favicon.png",
+      "name": "Saadet Saha",
+      "shortName": "Saadet",
+      "description": "Saadet Partisi Saha Uygulaması",
+      "themeColor": "#ea2a33",
+      "backgroundColor": "#ffffff"
     },
     "plugins": [
       "expo-router"
