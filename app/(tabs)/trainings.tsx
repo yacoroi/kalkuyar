@@ -184,7 +184,7 @@ export default function TrainingsScreen() {
                     <ActivityIndicator size="large" color="#ea2a33" />
                 </View>
             ) : (
-                <View style={isDesktop ? { maxWidth: 1200, alignSelf: 'center', width: '100%' } : undefined}>
+                <View style={isDesktop ? { maxWidth: 1200, alignSelf: 'center', width: '100%', flex: 1 } : { flex: 1 }}>
                     <FlatList
                         data={filteredTrainings}
                         renderItem={renderItem}
