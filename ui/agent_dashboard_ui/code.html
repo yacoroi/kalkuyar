@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Agent Dashboard UI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#ea2a33",
+              "background-light": "#f8f6f6",
+              "background-dark": "#211111",
+            },
+            fontFamily: {
+              "display": ["Public Sans"]
+            },
+            borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            font-size: 24px;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+<div class="relative flex h-screen w-full flex-col group/design-root overflow-y-auto">
+<!-- Top App Bar -->
+<header class="flex items-center bg-background-light dark:bg-background-dark p-4 justify-between sticky top-0 z-10">
+<div class="flex items-center gap-2">
+<div class="text-neutral-800 dark:text-neutral-200 flex size-10 items-center justify-center rounded-full bg-primary/10">
+<span class="material-symbols-outlined !text-primary">supervised_user_circle</span>
+</div>
+<h2 class="text-neutral-800 dark:text-neutral-200 text-lg font-bold leading-tight tracking-[-0.015em] flex-1">Merhaba, Ahmet</h2>
+</div>
+<div class="flex items-center justify-end">
+<p class="text-primary text-sm font-medium leading-normal shrink-0 bg-primary/20 px-3 py-1 rounded-full">Active Member</p>
+</div>
+</header>
+<main class="flex flex-col flex-1 px-4">
+<!-- Hero Card: Weekly Mission -->
+<div class="flex flex-col items-stretch justify-start rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.08)] dark:shadow-[0_4px_12px_rgba(0,0,0,0.2)] bg-background-light dark:bg-zinc-800 my-4">
+<div class="w-full bg-center bg-no-repeat aspect-[16/7] bg-cover rounded-t-xl" data-alt="Abstract gradient representing a mission objective" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCa6NpoG_eJyXgDruEI4KzedEsgmiGbAHcNxvIfyk2jEh0vfFuOEM7bZnwwFPU8_6T_ZfYI0fQccz2cB1fdOcPaKnzVDdPA2JVF8tjQFdRVX4egRB-sBhImHYdQtbywLfzu67MOlEDIYRjHeeziAA64XYp2fWwLPJyRklAi1m6hSpZqD44CHbWIJs5jqA2T7p9yX_d1CXLntYlljCzYtPPRqoNbPgCiqyyPufS_muCA5z1rwsmoNwpDAQMbjVIk7zLJgCa_YuoX7iNI");'></div>
+<div class="flex w-full min-w-72 grow flex-col items-stretch justify-center gap-4 p-4">
+<p class="text-neutral-800 dark:text-neutral-200 text-xl font-bold leading-tight tracking-[-0.015em]">Ekonomi Görevi</p>
+<!-- Progress Bar -->
+<div class="flex flex-col gap-2">
+<div class="w-full bg-neutral-200 dark:bg-neutral-700 rounded-full h-2">
+<div class="bg-primary h-2 rounded-full" style="width: 60%"></div>
+</div>
+<p class="text-neutral-500 dark:text-neutral-400 text-sm font-normal leading-normal">60% completed</p>
+</div>
+<div class="flex items-end justify-between">
+<button class="flex w-full min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-4 bg-primary text-white text-base font-medium leading-normal">
+<span class="truncate">Continue</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Text Grid: Quick Actions -->
+<div class="grid grid-cols-2 gap-3 mb-4">
+<div class="flex flex-1 gap-3 rounded-lg border border-neutral-200 dark:border-neutral-700 bg-background-light dark:bg-zinc-800 p-4 flex-col items-start">
+<div class="text-primary"><span class="material-symbols-outlined">person_add</span></div>
+<div class="flex flex-col gap-1 mt-2">
+<h2 class="text-neutral-800 dark:text-neutral-200 text-base font-bold leading-tight">New Contact</h2>
+<p class="text-neutral-500 dark:text-neutral-400 text-sm font-normal leading-normal">Add a new person</p>
+</div>
+</div>
+<div class="flex flex-1 gap-3 rounded-lg border border-neutral-200 dark:border-neutral-700 bg-background-light dark:bg-zinc-800 p-4 flex-col items-start">
+<div class="text-primary"><span class="material-symbols-outlined">book</span></div>
+<div class="flex flex-col gap-1 mt-2">
+<h2 class="text-neutral-800 dark:text-neutral-200 text-base font-bold leading-tight">Content Library</h2>
+<p class="text-neutral-500 dark:text-neutral-400 text-sm font-normal leading-normal">Campaign materials</p>
+</div>
+</div>
+<div class="flex flex-1 gap-3 rounded-lg border border-neutral-200 dark:border-neutral-700 bg-background-light dark:bg-zinc-800 p-4 flex-col items-start">
+<div class="text-primary"><span class="material-symbols-outlined">leaderboard</span></div>
+<div class="flex flex-col gap-1 mt-2">
+<h2 class="text-neutral-800 dark:text-neutral-200 text-base font-bold leading-tight">My Score</h2>
+<p class="text-neutral-500 dark:text-neutral-400 text-sm font-normal leading-normal">Performance metrics</p>
+</div>
+</div>
+<div class="flex flex-1 gap-3 rounded-lg border border-neutral-200 dark:border-neutral-700 bg-background-light dark:bg-zinc-800 p-4 flex-col items-start">
+<div class="text-primary"><span class="material-symbols-outlined">settings</span></div>
+<div class="flex flex-col gap-1 mt-2">
+<h2 class="text-neutral-800 dark:text-neutral-200 text-base font-bold leading-tight">Settings</h2>
+<p class="text-neutral-500 dark:text-neutral-400 text-sm font-normal leading-normal">App &amp; profile</p>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="flex gap-2 border-t border-neutral-200 dark:border-neutral-700 bg-background-light dark:bg-background-dark px-4 pb-3 pt-2 sticky bottom-0 z-10">
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-primary" href="#">
+<div class="text-primary flex h-8 items-center justify-center">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+</div>
+<p class="text-primary text-xs font-medium leading-normal tracking-[0.015em]">Dashboard</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-neutral-500 dark:text-neutral-400" href="#">
+<div class="text-neutral-500 dark:text-neutral-400 flex h-8 items-center justify-center">
+<span class="material-symbols-outlined">group</span>
+</div>
+<p class="text-neutral-500 dark:text-neutral-400 text-xs font-medium leading-normal tracking-[0.015em]">Contacts</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-neutral-500 dark:text-neutral-400" href="#">
+<div class="text-neutral-500 dark:text-neutral-400 flex h-8 items-center justify-center">
+<span class="material-symbols-outlined">task_alt</span>
+</div>
+<p class="text-neutral-500 dark:text-neutral-400 text-xs font-medium leading-normal tracking-[0.015em]">Tasks</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-neutral-500 dark:text-neutral-400" href="#">
+<div class="text-neutral-500 dark:text-neutral-400 flex h-8 items-center justify-center">
+<span class="material-symbols-outlined">account_circle</span>
+</div>
+<p class="text-neutral-500 dark:text-neutral-400 text-xs font-medium leading-normal tracking-[0.015em]">Profile</p>
+</a>
+</nav>
+</div>
+</body></html>

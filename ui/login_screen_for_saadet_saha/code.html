@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Saadet Saha Login</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ea2a33",
+                        "background-light": "#f8f6f6",
+                        "background-dark": "#211111",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-display">
+<div class="relative flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark group/design-root overflow-x-hidden">
+<div class="flex flex-col grow justify-center items-center w-full max-w-md mx-auto p-4">
+<!-- Logo Section -->
+<div class="flex flex-col items-center justify-center w-full px-4 pt-12 pb-8">
+<div class="w-24 h-24 mb-6">
+<div class="w-full h-full bg-center bg-no-repeat bg-contain" data-alt="Saadet Saha app logo featuring abstract geometric shapes in red and black" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCRQ6JdSl8wgFJcFkNtZeihReHc1Me6h4-XlRoNC71MUv8mqUnfdORqMvwc54gJkVK9oXZSKWssku0ipH197lvnkae80YtKFPBEnv1z-BVATRSq6Jb2J167VNLjnUm2_akwJgiKmcKnSwMJXA4Ca0E_P-PLNFE1-QDT9uaCc8dGf4VcZRiROxZJGjAPN1pT9UdDrUMa6YY1RWj8n-iBWYUAW2tWdZ7O5iaByEfiqfDIVXxa4_0tpNkW3EbAKc7Y2BEyDLEsMLsbq-WE");'></div>
+</div>
+<h1 class="text-3xl font-bold text-[#333333] dark:text-gray-200">Saadet Saha</h1>
+</div>
+<!-- Form Section -->
+<div class="w-full flex flex-col gap-6 px-4">
+<!-- Phone Number Input -->
+<label class="flex flex-col w-full">
+<p class="text-[#333333] dark:text-gray-300 text-base font-medium leading-normal pb-2">Telefon Numarası</p>
+<div class="flex w-full flex-1 items-stretch rounded-lg">
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#333333] dark:text-gray-200 focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#e0e0e0] dark:border-gray-600 bg-background-light dark:bg-background-dark h-14 placeholder:text-[#AAAAAA] p-[15px] rounded-r-none border-r-0 pr-2 text-base font-normal leading-normal" placeholder="5xx xxx xx xx" type="tel" value=""/>
+<div class="text-[#AAAAAA] dark:text-gray-400 flex border border-[#e0e0e0] dark:border-gray-600 bg-background-light dark:bg-background-dark items-center justify-center pr-[15px] rounded-r-lg border-l-0">
+<span class="material-symbols-outlined">phone</span>
+</div>
+</div>
+</label>
+<!-- Password Input -->
+<label class="flex flex-col w-full">
+<p class="text-[#333333] dark:text-gray-300 text-base font-medium leading-normal pb-2">Şifre</p>
+<div class="flex w-full flex-1 items-stretch rounded-lg">
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#333333] dark:text-gray-200 focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#e0e0e0] dark:border-gray-600 bg-background-light dark:bg-background-dark h-14 placeholder:text-[#AAAAAA] p-[15px] rounded-r-none border-r-0 pr-2 text-base font-normal leading-normal" placeholder="••••••••" type="password" value=""/>
+<div class="text-[#AAAAAA] dark:text-gray-400 flex border border-[#e0e0e0] dark:border-gray-600 bg-background-light dark:bg-background-dark items-center justify-center pr-[15px] rounded-r-lg border-l-0">
+<span class="material-symbols-outlined">lock</span>
+</div>
+</div>
+</label>
+</div>
+<div class="flex-grow"></div>
+<!-- Actions Section -->
+<div class="w-full flex flex-col items-center gap-4 px-4 py-8">
+<!-- Login Button -->
+<button class="flex min-w-[84px] w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-14 px-5 bg-primary text-white text-lg font-bold leading-normal tracking-[0.015em] hover:bg-red-700 transition-colors">
+<span class="truncate">Giriş Yap</span>
+</button>
+<!-- Sign Up Link -->
+<p class="text-[#666666] dark:text-gray-400 text-sm font-normal leading-normal pt-2 text-center underline cursor-pointer hover:text-primary transition-colors">Üye Olmak İstiyorum</p>
+</div>
+</div>
+</div>
+</body></html>

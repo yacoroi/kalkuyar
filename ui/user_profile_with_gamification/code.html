@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>User Profile with Gamification</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#bd0505",
+            "background-light": "#f8f5f5",
+            "background-dark": "#230f0f",
+          },
+          fontFamily: {
+            "display": ["Plus Jakarta Sans", "Noto Sans", "sans-serif"]
+          },
+          borderRadius: {
+            "DEFAULT": "0.5rem",
+            "lg": "1rem",
+            "xl": "1.5rem",
+            "full": "9999px"
+          },
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body>
+<div class="relative flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark font-display text-slate-800 dark:text-slate-200 group/design-root overflow-x-hidden">
+<!-- Top App Bar -->
+<div class="flex items-center bg-background-light dark:bg-background-dark p-4 pb-2 justify-between sticky top-0 z-10">
+<div class="flex size-12 shrink-0 items-center justify-start">
+<button class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-12 text-slate-800 dark:text-slate-200 gap-2 text-base font-bold leading-normal tracking-[0.015em] min-w-0 p-0 w-12">
+<span class="material-symbols-outlined text-2xl">arrow_back</span>
+</button>
+</div>
+<h2 class="text-slate-900 dark:text-slate-50 text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center">Profile</h2>
+<div class="flex w-12 items-center justify-end">
+<button class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-12 bg-transparent text-slate-800 dark:text-slate-200 gap-2 text-base font-bold leading-normal tracking-[0.015em] min-w-0 p-0">
+<span class="material-symbols-outlined text-2xl">settings</span>
+</button>
+</div>
+</div>
+<!-- Profile Header -->
+<div class="flex p-4 @container mt-4">
+<div class="flex w-full flex-col gap-4 items-center">
+<div class="flex gap-4 flex-col items-center">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full min-h-32 w-32" data-alt="User's avatar, a portrait photo" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCTmJYUgPIl6haiOVmzqTLBCKesybYk1qJZ-xQ8KuDsblj5FxutGCqg_3lZSxnkKalIxtV1bcSiToJdaQdGrkJHaDgPGShxuc5GPsHe3gZdxhpNGPQYSbh0mylrvvTiIuLM1YgdB4ORfaI4an-nQWd4XrGWE57YncliUCBpZldueDbv1thANIzCjIMK4obc1I4apa9EubMI7kEVXNXhC13o8OiVWuXDMKv6SxNAZVPAewgcGg_-AJ3FBUhiXes6vX7qq914MNJ-rTO2");'></div>
+<div class="flex flex-col items-center justify-center">
+<p class="text-slate-900 dark:text-slate-50 text-[22px] font-bold leading-tight tracking-[-0.015em] text-center">Ali Veli</p>
+<p class="text-slate-500 dark:text-slate-400 text-base font-medium leading-normal text-center">Mahalle Başkanı</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Profile Stats -->
+<div class="flex flex-wrap gap-3 px-4 py-3">
+<div class="flex min-w-[111px] flex-1 basis-[fit-content] flex-col gap-2 rounded-xl bg-slate-50 dark:bg-slate-800/50 p-4 items-center text-center border border-slate-200 dark:border-slate-800">
+<p class="text-slate-900 dark:text-slate-50 tracking-tight text-2xl font-bold leading-tight">1,250</p>
+<div class="flex items-center gap-2">
+<p class="text-slate-500 dark:text-slate-400 text-sm font-normal leading-normal">Total Points</p>
+</div>
+</div>
+<div class="flex min-w-[111px] flex-1 basis-[fit-content] flex-col gap-2 rounded-xl bg-slate-50 dark:bg-slate-800/50 p-4 items-center text-center border border-slate-200 dark:border-slate-800">
+<p class="text-slate-900 dark:text-slate-50 tracking-tight text-2xl font-bold leading-tight">88</p>
+<div class="flex items-center gap-2">
+<p class="text-slate-500 dark:text-slate-400 text-sm font-normal leading-normal">Tasks Done</p>
+</div>
+</div>
+<div class="flex min-w-[111px] flex-1 basis-[fit-content] flex-col gap-2 rounded-xl bg-slate-50 dark:bg-slate-800/50 p-4 items-center text-center border border-slate-200 dark:border-slate-800">
+<p class="text-slate-900 dark:text-slate-50 tracking-tight text-2xl font-bold leading-tight">432</p>
+<div class="flex items-center gap-2">
+<p class="text-slate-500 dark:text-slate-400 text-sm font-normal leading-normal">People Reached</p>
+</div>
+</div>
+</div>
+<!-- Progress Bar -->
+<div class="flex flex-col gap-3 p-4">
+<div class="flex gap-6 justify-between">
+<p class="text-slate-900 dark:text-slate-50 text-base font-medium leading-normal">Next Rank: Elite Agent</p>
+</div>
+<div class="rounded-full bg-slate-200 dark:bg-slate-700 h-2">
+<div class="h-2 rounded-full bg-gradient-to-r from-red-400 to-primary" style="width: 42%;"></div>
+</div>
+<p class="text-slate-500 dark:text-slate-400 text-sm font-normal leading-normal">500/1200 points</p>
+</div>
+<!-- Section Header -->
+<h3 class="text-slate-900 dark:text-slate-50 text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Recent Achievements</h3>
+<!-- Achievements List -->
+<div class="flex flex-col gap-3 px-4 py-2">
+<div class="flex items-center gap-4 rounded-xl p-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800">
+<div class="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 dark:bg-primary/20 text-primary">
+<span class="material-symbols-outlined">emoji_events</span>
+</div>
+<div class="flex-1">
+<p class="font-semibold text-slate-800 dark:text-slate-100">Top Performer of the Day</p>
+<p class="text-sm text-slate-500 dark:text-slate-400">Unlocked: 24 Oct 2023</p>
+</div>
+</div>
+<div class="flex items-center gap-4 rounded-xl p-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800">
+<div class="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 dark:bg-primary/20 text-primary">
+<span class="material-symbols-outlined">task_alt</span>
+</div>
+<div class="flex-1">
+<p class="font-semibold text-slate-800 dark:text-slate-100">Completed Weekly Goal</p>
+<p class="text-sm text-slate-500 dark:text-slate-400">Unlocked: 23 Oct 2023</p>
+</div>
+</div>
+<div class="flex items-center gap-4 rounded-xl p-4 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800">
+<div class="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 dark:bg-primary/20 text-primary">
+<span class="material-symbols-outlined">home</span>
+</div>
+<div class="flex-1">
+<p class="font-semibold text-slate-800 dark:text-slate-100">First 100 Homes Visited</p>
+<p class="text-sm text-slate-500 dark:text-slate-400">Unlocked: 20 Oct 2023</p>
+</div>
+</div>
+</div>
+</div>
+</body></html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Task Detail Screen</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#ea2a33",
+            "background-light": "#f8f6f6",
+            "background-dark": "#211111",
+          },
+          fontFamily: {
+            "display": ["Public Sans", "sans-serif"]
+          },
+          borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      font-size: 24px;
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-display bg-background-light dark:bg-background-dark">
+<div class="relative flex min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+<!-- Top App Bar -->
+<header class="sticky top-0 z-10 flex h-14 items-center border-b border-gray-200/80 bg-background-light/80 px-4 backdrop-blur-sm dark:border-gray-800/80 dark:bg-background-dark/80">
+<button class="flex size-10 shrink-0 items-center justify-center text-gray-800 dark:text-gray-200">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<h1 class="ml-2 flex-1 text-lg font-bold text-gray-900 dark:text-gray-100">Görev Detayı</h1>
+</header>
+<!-- Main Content -->
+<main class="flex-1 pb-28">
+<!-- Headline Text -->
+<h2 class="text-[#1C1B1F] dark:text-gray-100 tracking-light text-[32px] font-bold leading-tight px-4 pb-3 pt-6">Mahalle Ziyareti: Fatih Cd.</h2>
+<!-- Message Framework Section -->
+<section class="mt-4">
+<h3 class="text-[#1C1B1F] dark:text-gray-200 text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Konuşma Çerçevesi</h3>
+<p class="text-[#49454F] dark:text-gray-400 text-base font-normal leading-normal px-4">
+          Bu bölümde, saha temsilcisinin görüşme sırasında iletmesi gereken temel mesajın ayrıntılı bir açıklaması yer alacaktır. Mahalle sakinlerinin sorunlarına odaklanın ve çözüm önerilerimizi anlatın.
+        </p>
+</section>
+<!-- Key Sentences Section -->
+<section class="mt-6">
+<h3 class="text-[#1C1B1F] dark:text-gray-200 text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Anahtar Cümleler</h3>
+<div class="flex flex-col gap-3 px-4">
+<!-- Quote Block 1 -->
+<div class="rounded-lg border-l-4 border-primary bg-primary/10 p-4 dark:bg-primary/20">
+<p class="text-[#1C1B1F] dark:text-gray-200 text-base font-normal leading-normal">"Partimizin mahallemiz için hazırladığı projelerle yaşam kalitesini artırmayı hedefliyoruz."</p>
+</div>
+<!-- Quote Block 2 -->
+<div class="rounded-lg border-l-4 border-primary bg-primary/10 p-4 dark:bg-primary/20">
+<p class="text-[#1C1B1F] dark:text-gray-200 text-base font-normal leading-normal">"Sizin görüşleriniz bizim için çok değerli, yerel yönetimde şeffaflık ve katılımcılık sağlayacağız."</p>
+</div>
+<!-- Quote Block 3 -->
+<div class="rounded-lg border-l-4 border-primary bg-primary/10 p-4 dark:bg-primary/20">
+<p class="text-[#1C1B1F] dark:text-gray-200 text-base font-normal leading-normal">"Ekonomik zorlukların farkındayız ve aile bütçelerini rahatlatacak adımlar atacağız."</p>
+</div>
+</div>
+</section>
+<!-- Video Attachment Section -->
+<section class="mt-6">
+<h3 class="text-[#1C1B1F] dark:text-gray-200 text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">İlgili Video</h3>
+<div class="px-4">
+<button class="relative aspect-video w-full max-w-sm overflow-hidden rounded-lg shadow-md transition-transform active:scale-95">
+<img class="h-full w-full object-cover" data-alt="A group of people having a discussion in a bright, modern room." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCYTkwwzeZDiTJfy1LyrTRAjEXL19BP2UO0fJi5y-DxZw0tfTy1PJ1Ubenr-4wXnYylQ0RafaOZpbvcBmivZYhoe_CFfC8mHlOvjU9nSi9BZrNzTCOeTQkb7flps5QHGFrwScj7Y3CDNA8e9uo396vzW1lK8ONlRu-35drcMOu_hczAsMhZH7BH4GCWv4BL8U6QL9kCfXatGNK2L6Xk0nAMjuu-CEsz98zfLkq1erzViLN0hm-rHOZlD2uM3Qe3nOaWVGO073GyLohQ"/>
+<div class="absolute inset-0 flex items-center justify-center bg-black/40">
+<div class="flex size-14 items-center justify-center rounded-full bg-white/80 backdrop-blur-sm">
+<span class="material-symbols-outlined text-4xl text-gray-900">play_arrow</span>
+</div>
+</div>
+</button>
+</div>
+</section>
+<!-- Survey Questions Section -->
+<section class="mt-6">
+<h3 class="text-[#1C1B1F] dark:text-gray-200 text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">Anket Soruları</h3>
+<ul class="list-disc space-y-2 pl-9 pr-4 text-[#49454F] dark:text-gray-400">
+<li>Mahallemizdeki en önemli sorun sizce nedir?</li>
+<li>Yerel yönetimden beklentileriniz nelerdir?</li>
+<li>Partimizin projeleri hakkında ne düşünüyorsunuz?</li>
+<li>Seçimlerde oy kullanmayı düşünüyor musunuz?</li>
+</ul>
+</section>
+</main>
+<!-- Floating Action Button (FAB) -->
+<div class="fixed bottom-6 right-6">
+<button class="flex h-14 items-center gap-3 rounded-xl bg-[#28a745] px-5 text-white shadow-lg transition-transform active:scale-95">
+<span class="material-symbols-outlined">edit_document</span>
+<span class="text-base font-bold">Rapor Gir</span>
+</button>
+</div>
+</div>
+</body></html>
