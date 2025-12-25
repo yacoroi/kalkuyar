@@ -44,3 +44,4 @@ yarn-error.*
 .netlify
 # Large files
 *.zip
+sms-proxy/
