@@ -1,138 +1,100 @@
-// Supabase Edge Function for Dinamik SMS OTP
+// Supabase Edge Function for iletimx SMS OTP
 // Deploy with: supabase functions deploy send-sms --no-verify-jwt
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
-const DINAMIK_SMS_API_URL = Deno.env.get("DINAMIK_SMS_API_URL") || "https://api.dinamiksms.com.tr/sms"; // Dinamik SMS'ten doğru URL'yi alın
-const DINAMIK_SMS_USERNAME = Deno.env.get("DINAMIK_SMS_USERNAME") || ""; // Format: kullaniciadi-bayikodu
-const DINAMIK_SMS_PASSWORD = Deno.env.get("DINAMIK_SMS_PASSWORD") || "";
-const DINAMIK_SMS_ORIGINATOR = Deno.env.get("DINAMIK_SMS_ORIGINATOR") || ""; // SMS başlığı (max 11 karakter)
+// API Configuration
+const ILETIMX_API_URL = "http://g.iletimx.com";
+const ILETIMX_USERNAME = Deno.env.get("ILETIMX_USERNAME") || "";
+const ILETIMX_PASSWORD = Deno.env.get("ILETIMX_PASSWORD") || "";
+const ILETIMX_BAYI_KODU = Deno.env.get("ILETIMX_BAYI_KODU") || "3408";
+const ILETIMX_ORIGINATOR = Deno.env.get("ILETIMX_ORIGINATOR") || "";
 
 const corsHeaders = {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-interface SendSMSPayload {
-    type: "sms";
-    phone: string;
-    otp: string;
-}
-
 serve(async (req) => {
-    // Handle CORS preflight
     if (req.method === "OPTIONS") {
         return new Response("ok", { headers: corsHeaders });
     }
 
     try {
-        const payload: SendSMSPayload = await req.json();
+        const rawBody = await req.text();
+        console.log("Raw request body:", rawBody);
 
-        console.log("Received SMS request for phone:", payload.phone);
+        const payload = JSON.parse(rawBody);
+        const phone = payload.user?.phone;
+        const otp = payload.sms?.otp;
 
-        // Validate payload
-        if (!payload.phone || !payload.otp) {
+        console.log("Phone:", phone, "OTP:", otp);
+
+        if (!phone || !otp) {
             return new Response(
                 JSON.stringify({ error: "Phone and OTP are required" }),
                 { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
             );
         }
 
-        // Format phone number (remove + if present, ensure it's just digits)
-        let phoneNumber = payload.phone.replace(/\D/g, "");
-        // If starts with 90, remove it (Dinamik SMS expects local format)
+        // Format phone number
+        let phoneNumber = phone.replace(/\D/g, "");
         if (phoneNumber.startsWith("90")) {
-            phoneNumber = phoneNumber.substring(2);
+            phoneNumber = "0" + phoneNumber.substring(2);
         }
-        // Ensure it starts with 5
-        if (!phoneNumber.startsWith("5")) {
-            phoneNumber = "5" + phoneNumber;
+        if (!phoneNumber.startsWith("0")) {
+            phoneNumber = "0" + phoneNumber;
         }
 
-        // Create OTP message
-        const message = `Dogrulama kodunuz: ${payload.otp}`;
+        const message = `Dogrulama kodunuz: ${otp}`;
+        const fullUsername = `${ILETIMX_USERNAME}-${ILETIMX_BAYI_KODU}`;
 
-        // Build XML payload for Dinamik SMS
-        const xmlPayload = `
-      <SingleTextSMS>
-        <UserName>${DINAMIK_SMS_USERNAME}</UserName>
-        <PassWord>${DINAMIK_SMS_PASSWORD}</PassWord>
-        <Action>0</Action>
-        <Mesgbody>${message}</Mesgbody>
-        <Numbers>${phoneNumber}</Numbers>
-        <Originator>${DINAMIK_SMS_ORIGINATOR}</Originator>
-      </SingleTextSMS>
-    `.trim();
+        const xmlPayload = `<MainmsgBody><UserName>${fullUsername}</UserName><PassWord>${ILETIMX_PASSWORD}</PassWord><Action>0</Action><Mesgbody>${message}</Mesgbody><Numbers>${phoneNumber}</Numbers><Originator>${ILETIMX_ORIGINATOR}</Originator><SDate></SDate></MainmsgBody>`;
 
-        console.log("Sending SMS to Dinamik SMS API...");
+        console.log("Username:", fullUsername);
+        console.log("XML Payload:", xmlPayload);
 
-        // Send request to Dinamik SMS
-        const response = await fetch(DINAMIK_SMS_API_URL, {
+        const encoder = new TextEncoder();
+        const bodyBytes = encoder.encode(xmlPayload);
+
+        const response = await fetch(ILETIMX_API_URL, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/xml",
-            },
-            body: xmlPayload,
+            headers: { "Content-Type": "application/octet-stream" },
+            body: bodyBytes,
         });
 
         const responseText = await response.text();
-        console.log("Dinamik SMS Response:", responseText);
+        console.log("iletimx Response:", responseText);
 
-        // Check for success (ID: xxxxx format means success)
         if (responseText.includes("ID:") || responseText.includes("ID :")) {
             return new Response(
-                JSON.stringify({
-                    success: true,
-                    message: "SMS sent successfully",
-                    response: responseText
-                }),
-                {
-                    status: 200,
-                    headers: { ...corsHeaders, "Content-Type": "application/json" }
-                }
+                JSON.stringify({ success: true }),
+                { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
             );
         }
 
-        // Check for known error codes
         const errorCodes: Record<string, string> = {
             "01": "Hatalı Kullanıcı Adı, Şifre veya Bayi Kodu",
-            "02": "Yetersiz Kredi / Ödenmemiş Fatura Borcu",
-            "03": "Tanımsız Action Parametresi",
-            "05": "XML Düğümü Eksik veya Hatalı",
+            "02": "Yetersiz Kredi",
             "06": "Tanımsız Originator",
-            "07": "Mesaj Kodu (ID) yok",
-            "09": "Tarih alanları hatalı",
-            "10": "SMS Gönderilemedi",
         };
 
-        // Extract error code if present
-        const errorMatch = responseText.match(/(\d{2})/);
+        const errorMatch = responseText.trim().match(/^(\d{2})$/);
         const errorMessage = errorMatch && errorCodes[errorMatch[1]]
             ? errorCodes[errorMatch[1]]
-            : `Unknown error: ${responseText}`;
+            : `SMS hatası: ${responseText}`;
 
-        console.error("SMS sending failed:", errorMessage);
-
+        console.error("SMS failed:", errorMessage);
         return new Response(
-            JSON.stringify({
-                success: false,
-                error: errorMessage,
-                rawResponse: responseText
-            }),
-            {
-                status: 500,
-                headers: { ...corsHeaders, "Content-Type": "application/json" }
-            }
+            JSON.stringify({ success: false, error: errorMessage }),
+            { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
 
     } catch (error) {
-        console.error("Error in send-sms function:", error);
+        console.error("Error:", error);
         return new Response(
-            JSON.stringify({ error: error.message }),
-            {
-                status: 500,
-                headers: { ...corsHeaders, "Content-Type": "application/json" }
-            }
+            JSON.stringify({ error: String(error) }),
+            { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
     }
 });
