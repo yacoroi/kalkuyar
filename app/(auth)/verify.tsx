@@ -136,6 +136,8 @@ export default function VerifyScreen() {
                                 keyboardType="number-pad"
                                 maxLength={6}
                                 autoFocus
+                                textContentType="oneTimeCode"
+                                autoComplete="sms-otp"
                             />
                         </Animated.View>
                         {/* INLINE ERROR MESSAGE */}

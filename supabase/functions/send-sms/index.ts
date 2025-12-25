@@ -46,10 +46,12 @@ serve(async (req) => {
             phoneNumber = "0" + phoneNumber;
         }
 
-        const message = `Dogrulama kodunuz: ${otp}`;
+        // Türkçe karakter için Action 12 kullanılıyor
+        const message = `KalkUyar uygulaması için doğrulama kodunuz: ${otp}`;
         const fullUsername = `${ILETIMX_USERNAME}-${ILETIMX_BAYI_KODU}`;
 
-        const xmlPayload = `<MainmsgBody><UserName>${fullUsername}</UserName><PassWord>${ILETIMX_PASSWORD}</PassWord><Action>0</Action><Mesgbody>${message}</Mesgbody><Numbers>${phoneNumber}</Numbers><Originator>${ILETIMX_ORIGINATOR}</Originator><SDate></SDate></MainmsgBody>`;
+        // Action 12 = Türkçe karakterli SMS gönderimi
+        const xmlPayload = `<MainmsgBody><UserName>${fullUsername}</UserName><PassWord>${ILETIMX_PASSWORD}</PassWord><Action>12</Action><Mesgbody><![CDATA[${message}]]></Mesgbody><Numbers>${phoneNumber}</Numbers><Originator>${ILETIMX_ORIGINATOR}</Originator><SDate></SDate></MainmsgBody>`;
 
         console.log("Username:", fullUsername);
         console.log("XML Payload:", xmlPayload);

@@ -4,10 +4,12 @@ import { BookOpen, ClipboardList, Flame, MapPin, Trophy, User as UserIcon } from
 import React, { useEffect } from 'react';
 import { ActivityIndicator, Dimensions, FlatList, Pressable, RefreshControl, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { StoriesRail } from '../../components/stories/StoriesRail';
 import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
 import { useScaleFont } from '../../hooks/useScaleFont';
 import { supabase } from '../../lib/supabase';
 import { useAuthStore } from '../../stores/useAuthStore';
+import { useStoryStore } from '../../stores/useStoryStore';
 import { useTaskStore } from '../../stores/useTaskStore';
 import { News } from '../../types';
 
@@ -34,6 +36,7 @@ interface PendingSurvey {
 export default function DashboardScreen() {
   const { profile, user } = useAuthStore();
   const { activeTasks, loading, fetchActiveTasks } = useTaskStore();
+  const { fetchStories } = useStoryStore();
   const [refreshing, setRefreshing] = React.useState(false);
   const { scaleFont } = useScaleFont();
   const { isDesktop, width } = useResponsiveLayout();
@@ -44,6 +47,7 @@ export default function DashboardScreen() {
   const [pendingSurveys, setPendingSurveys] = React.useState<PendingSurvey[]>([]);
 
   useEffect(() => {
+    fetchStories();
     fetchNews();
   }, []);
 
@@ -204,6 +208,7 @@ export default function DashboardScreen() {
       fetchRankings(),
       fetchLatestTraining(),
       fetchPendingSurveys(),
+      fetchStories(),
       user && profile ? fetchActiveTasks(user.id, profile.topics) : Promise.resolve()
     ]);
     setRefreshing(false);
@@ -388,6 +393,9 @@ export default function DashboardScreen() {
         )}
 
         <View style={isDesktop ? { maxWidth: 1200, alignSelf: 'center', width: '100%', paddingHorizontal: 24 } : undefined} className="flex-1 px-4 mt-4">
+          {/* STORIES RAIL */}
+          <StoriesRail />
+
           {/* HERO CAROUSEL: WEEKLY MISSIONS */}
           <View className="mb-6">
             {loading ? (
@@ -622,7 +630,6 @@ export default function DashboardScreen() {
           )}
 
         </View>
-
       </ScrollView>
     </SafeAreaView>
   );

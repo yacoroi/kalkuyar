@@ -1,7 +1,7 @@
 'use client';
 
 import { logout } from '@/actions/auth';
-import { Award, BookOpen, ClipboardList, FileText, LayoutDashboard, LogOut, Mail, MessageSquare, Newspaper, Users } from 'lucide-react';
+import { Award, BookOpen, ClipboardList, FileText, LayoutDashboard, LogOut, Mail, MessageSquare, Newspaper, Users, Video } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -50,6 +50,10 @@ export default function Sidebar() {
                 <Link href="/news" className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-red-600 transition-all font-medium group">
                     <Newspaper size={20} className="group-hover:text-red-600 transition-colors" />
                     <span>Haber Yönetimi</span>
+                </Link>
+                <Link href="/stories" className="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-gray-50 hover:text-red-600 transition-all font-medium group">
+                    <Video size={20} className="group-hover:text-red-600 transition-colors" />
+                    <span>Hikayeler</span>
                 </Link>
                 <Link
                     href="/contact"
