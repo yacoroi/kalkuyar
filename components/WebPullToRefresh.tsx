@@ -17,40 +17,60 @@ export function WebPullToRefresh({ children, onRefresh, refreshing = false }: We
     const [isRefreshing, setIsRefreshing] = useState(false);
     const startY = useRef(0);
     const isPulling = useRef(false);
-    const scrollTop = useRef(0);
+    const isAtTop = useRef(false);
+    const containerRef = useRef<View>(null);
 
     const THRESHOLD = 80;
     const MAX_PULL = 120;
 
-    const handleTouchStart = useCallback((e: any) => {
-        // Check if we're at the top of the scroll
-        const target = e.target as HTMLElement;
-        let scrollableParent = target;
-        while (scrollableParent && scrollableParent.scrollTop === undefined) {
-            scrollableParent = scrollableParent.parentElement as HTMLElement;
-        }
-        scrollTop.current = scrollableParent?.scrollTop || 0;
+    // Find scrollable parent and check scroll position
+    const getScrollTop = useCallback(() => {
+        if (typeof window === 'undefined') return 0;
 
-        if (scrollTop.current <= 0) {
-            startY.current = e.touches?.[0]?.clientY || e.nativeEvent?.pageY || 0;
-            isPulling.current = true;
+        // Try to find the scrollable element
+        const scrollables = document.querySelectorAll('[data-testid], [class*="scroll"]');
+        for (const el of scrollables) {
+            if (el.scrollTop > 0) return el.scrollTop;
         }
+
+        // Fallback to document scroll
+        return window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0;
     }, []);
 
+    const handleTouchStart = useCallback((e: any) => {
+        const scrollTop = getScrollTop();
+        isAtTop.current = scrollTop <= 5; // Small threshold for tolerance
+
+        if (isAtTop.current) {
+            startY.current = e.touches?.[0]?.clientY || e.nativeEvent?.pageY || 0;
+            isPulling.current = true;
+        } else {
+            isPulling.current = false;
+        }
+    }, [getScrollTop]);
+
     const handleTouchMove = useCallback((e: any) => {
-        if (!isPulling.current || isRefreshing) return;
+        if (!isPulling.current || isRefreshing || !isAtTop.current) return;
 
         const currentY = e.touches?.[0]?.clientY || e.nativeEvent?.pageY || 0;
         const diff = currentY - startY.current;
 
-        if (diff > 0 && scrollTop.current <= 0) {
+        // Only allow pulling DOWN, not UP
+        if (diff > 0) {
             const distance = Math.min(diff * 0.5, MAX_PULL);
             setPullDistance(distance);
+        } else {
+            // If user swipes up, reset
+            setPullDistance(0);
+            isPulling.current = false;
         }
     }, [isRefreshing]);
 
     const handleTouchEnd = useCallback(async () => {
-        if (!isPulling.current) return;
+        if (!isPulling.current || !isAtTop.current) {
+            setPullDistance(0);
+            return;
+        }
         isPulling.current = false;
 
         if (pullDistance >= THRESHOLD && !isRefreshing) {
@@ -72,6 +92,7 @@ export function WebPullToRefresh({ children, onRefresh, refreshing = false }: We
 
     return (
         <View
+            ref={containerRef}
             style={styles.container}
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
@@ -123,3 +144,4 @@ const styles = StyleSheet.create({
         flex: 1,
     },
 });
+

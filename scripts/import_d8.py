@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 """
-Batch import script for content library.
-Reads DOCX files for descriptions, uploads PDFs to Supabase Storage,
-and inserts records into trainings table.
+D-8 içeriklerini içerik kütüphanesine ekle.
 """
 
 import os
@@ -16,22 +14,8 @@ from pathlib import Path
 SUPABASE_URL = "https://batzvgczjldnnesojnjj.supabase.co"
 SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhdHp2Z2N6amxkbm5lc29qbmpqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ5NDM2NDIsImV4cCI6MjA4MDUxOTY0Mn0.19eJDxjnfMWMXuH6FWWK7AzJoQUbHlYEpWXZcOdny5Q"
 
-# Category mapping (folder name -> topic name)
-TOPIC_MAPPING = {
-    "ADALET": "Adalet",
-    "AİLE": "Aile",
-    "D8": "D-8",
-    "DIŞ POLİTİKA": "Dış Politika",
-    "EKONOMİ": "Ekonomi",
-    "EĞİTİM": "Eğitim",
-    "GENÇLİK": "Gençlik",
-    "SAĞLIK": "Sağlık",
-    "TARIM": "Tarım",
-    "TEKNOLOJİ": "Teknoloji",
-    "ŞEHİRCİLİK": "Şehircilik",
-}
-
-CONTENT_DIR = Path(__file__).parent.parent / "İçerikler"
+CONTENT_DIR = Path(__file__).parent.parent / "İçerikler" / "D8"
+TOPIC = "D-8"
 
 
 def extract_description_from_docx(docx_path: Path) -> str:
@@ -71,13 +55,11 @@ def extract_description_from_docx(docx_path: Path) -> str:
 def upload_pdf_to_storage(pdf_path: Path) -> str | None:
     """Upload PDF to Supabase Storage and return public URL."""
     try:
-        # Generate unique filename
         import time
         import random
         file_ext = pdf_path.suffix
         file_name = f"{random.randint(10000, 99999)}_{int(time.time())}{file_ext}"
         
-        # Upload to storage
         headers = {
             "Authorization": f"Bearer {SUPABASE_KEY}",
             "apikey": SUPABASE_KEY,
@@ -91,7 +73,6 @@ def upload_pdf_to_storage(pdf_path: Path) -> str | None:
             )
         
         if response.status_code in [200, 201]:
-            # Return public URL
             return f"{SUPABASE_URL}/storage/v1/object/public/content_media/{file_name}"
         else:
             print(f"  ⚠️ Upload failed: {response.status_code} - {response.text[:200]}")
@@ -138,61 +119,52 @@ def insert_training(title: str, topic: str, description: str, media_url: str | N
 
 def main():
     print("=" * 60)
-    print("📚 İçerik Kütüphanesi Toplu Yükleme Scripti")
+    print("📚 D-8 İçerikleri Yükleme")
     print("=" * 60)
     
     if not CONTENT_DIR.exists():
-        print(f"❌ İçerikler klasörü bulunamadı: {CONTENT_DIR}")
+        print(f"❌ D8 klasörü bulunamadı: {CONTENT_DIR}")
         sys.exit(1)
     
     success_count = 0
     error_count = 0
     
-    # Process each category folder
-    for folder in sorted(CONTENT_DIR.iterdir()):
-        if not folder.is_dir():
-            continue
+    # Find all DOCX files
+    docx_files = list(CONTENT_DIR.glob("*.docx"))
+    
+    print(f"\n📁 {len(docx_files)} içerik bulundu\n")
+    
+    for docx_path in sorted(docx_files):
+        title = docx_path.stem
+        pdf_path = docx_path.with_suffix(".pdf")
         
-        folder_name = folder.name
-        topic = TOPIC_MAPPING.get(folder_name, folder_name.title())
+        print(f"📄 {title}")
         
-        print(f"\n📁 Kategori: {folder_name} → {topic}")
-        print("-" * 40)
+        # Extract description from DOCX
+        description = extract_description_from_docx(docx_path)
+        if description:
+            print(f"   ✓ Açıklama: {description[:60]}...")
+        else:
+            print(f"   ⚠️ Açıklama bulunamadı")
         
-        # Find all DOCX files
-        docx_files = list(folder.glob("*.docx"))
-        
-        for docx_path in sorted(docx_files):
-            title = docx_path.stem  # Filename without extension
-            pdf_path = docx_path.with_suffix(".pdf")
-            
-            print(f"  📄 {title}")
-            
-            # Extract description from DOCX
-            description = extract_description_from_docx(docx_path)
-            if description:
-                print(f"     ✓ Açıklama: {description[:60]}...")
+        # Upload PDF if exists
+        media_url = None
+        if pdf_path.exists():
+            media_url = upload_pdf_to_storage(pdf_path)
+            if media_url:
+                print(f"   ✓ PDF yüklendi")
             else:
-                print(f"     ⚠️ Açıklama bulunamadı")
-            
-            # Upload PDF if exists
-            media_url = None
-            if pdf_path.exists():
-                media_url = upload_pdf_to_storage(pdf_path)
-                if media_url:
-                    print(f"     ✓ PDF yüklendi")
-                else:
-                    print(f"     ⚠️ PDF yüklenemedi")
-            else:
-                print(f"     ⚠️ PDF bulunamadı")
-            
-            # Insert into database
-            if insert_training(title, topic, description, media_url):
-                print(f"     ✓ Veritabanına eklendi")
-                success_count += 1
-            else:
-                print(f"     ❌ Ekleme başarısız")
-                error_count += 1
+                print(f"   ⚠️ PDF yüklenemedi")
+        else:
+            print(f"   ⚠️ PDF bulunamadı")
+        
+        # Insert into database
+        if insert_training(title, TOPIC, description, media_url):
+            print(f"   ✓ Veritabanına eklendi")
+            success_count += 1
+        else:
+            print(f"   ❌ Ekleme başarısız")
+            error_count += 1
     
     print("\n" + "=" * 60)
     print(f"✅ Başarılı: {success_count}")
