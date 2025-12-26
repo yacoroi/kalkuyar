@@ -232,7 +232,7 @@ export default function ProfileScreen() {
               <Text className="text-xs text-slate-500">Hedef</Text>
             </View>
             <View className="flex-1 bg-white p-4 rounded-xl border border-gray-100 items-center shadow-sm">
-              <Text className="text-2xl font-bold text-slate-900">{stats.peopleReached}</Text>
+              <Text className="text-2xl font-bold text-slate-900">{profile?.season_contacts || 0}</Text>
               <Text className="text-xs text-slate-500">Temas</Text>
             </View>
           </View>
