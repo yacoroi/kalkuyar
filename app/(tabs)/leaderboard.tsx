@@ -1,7 +1,8 @@
 import { Medal, User } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, FlatList, Image, Pressable, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, Image, Platform, Pressable, RefreshControl, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { WebPullToRefresh } from '../../components/WebPullToRefresh';
 import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
 import { supabase } from '../../lib/supabase';
 import { useAuthStore } from '../../stores/useAuthStore';
@@ -22,6 +23,13 @@ export default function LeaderboardScreen() {
     const [scope, setScope] = useState<Scope>('neighborhood');
     const [rankings, setRankings] = useState<LeaderboardUser[]>([]);
     const [loading, setLoading] = useState(true);
+    const [refreshing, setRefreshing] = useState(false);
+
+    const onRefresh = async () => {
+        setRefreshing(true);
+        await fetchLeaderboard();
+        setRefreshing(false);
+    };
 
     useEffect(() => {
         if (profile) {
@@ -109,89 +117,94 @@ export default function LeaderboardScreen() {
 
     return (
         <SafeAreaView className="flex-1 bg-gray-50">
-            <View style={isDesktop ? { maxWidth: 800, alignSelf: 'center', width: '100%', flex: 1 } : { flex: 1 }}>
-                {/* Header */}
-                <View className="bg-white px-4 pt-2 pb-4 shadow-sm z-10">
-                    <View className="items-center mb-4 mt-2">
-                        <Text className="text-xl font-bold text-slate-900">Puan Sıralaması</Text>
+            <WebPullToRefresh onRefresh={onRefresh}>
+                <View style={isDesktop ? { maxWidth: 800, alignSelf: 'center', width: '100%', flex: 1 } : { flex: 1 }}>
+                    {/* Header */}
+                    <View className="bg-white px-4 pt-2 pb-4 shadow-sm z-10">
+                        <View className="items-center mb-4 mt-2">
+                            <Text className="text-xl font-bold text-slate-900">Puan Sıralaması</Text>
+                        </View>
+
+                        {/* Scope Selector */}
+                        <View style={{ flexDirection: 'row', backgroundColor: '#f3f4f6', padding: 4, borderRadius: 12 }}>
+                            <Pressable
+                                onPress={() => setScope('neighborhood')}
+                                style={{
+                                    flex: 1,
+                                    paddingVertical: 8,
+                                    alignItems: 'center',
+                                    borderRadius: 8,
+                                    backgroundColor: scope === 'neighborhood' ? '#ffffff' : 'transparent',
+                                    shadowColor: '#000',
+                                    shadowOffset: { width: 0, height: 1 },
+                                    shadowOpacity: scope === 'neighborhood' ? 0.1 : 0,
+                                    shadowRadius: 2,
+                                    elevation: scope === 'neighborhood' ? 2 : 0,
+                                }}
+                            >
+                                <Text style={{ fontWeight: 'bold', fontSize: 12, color: scope === 'neighborhood' ? '#dc2626' : '#6b7280' }}>MAHALLEM</Text>
+                            </Pressable>
+                            <Pressable
+                                onPress={() => setScope('district')}
+                                style={{
+                                    flex: 1,
+                                    paddingVertical: 8,
+                                    alignItems: 'center',
+                                    borderRadius: 8,
+                                    backgroundColor: scope === 'district' ? '#ffffff' : 'transparent',
+                                    shadowColor: '#000',
+                                    shadowOffset: { width: 0, height: 1 },
+                                    shadowOpacity: scope === 'district' ? 0.1 : 0,
+                                    shadowRadius: 2,
+                                    elevation: scope === 'district' ? 2 : 0,
+                                }}
+                            >
+                                <Text style={{ fontWeight: 'bold', fontSize: 12, color: scope === 'district' ? '#dc2626' : '#6b7280' }}>İLÇEM</Text>
+                            </Pressable>
+                            <Pressable
+                                onPress={() => setScope('city')}
+                                style={{
+                                    flex: 1,
+                                    paddingVertical: 8,
+                                    alignItems: 'center',
+                                    borderRadius: 8,
+                                    backgroundColor: scope === 'city' ? '#ffffff' : 'transparent',
+                                    shadowColor: '#000',
+                                    shadowOffset: { width: 0, height: 1 },
+                                    shadowOpacity: scope === 'city' ? 0.1 : 0,
+                                    shadowRadius: 2,
+                                    elevation: scope === 'city' ? 2 : 0,
+                                }}
+                            >
+                                <Text style={{ fontWeight: 'bold', fontSize: 12, color: scope === 'city' ? '#dc2626' : '#6b7280' }}>İL GENELİ</Text>
+                            </Pressable>
+                        </View>
                     </View>
 
-                    {/* Scope Selector */}
-                    <View style={{ flexDirection: 'row', backgroundColor: '#f3f4f6', padding: 4, borderRadius: 12 }}>
-                        <Pressable
-                            onPress={() => setScope('neighborhood')}
-                            style={{
-                                flex: 1,
-                                paddingVertical: 8,
-                                alignItems: 'center',
-                                borderRadius: 8,
-                                backgroundColor: scope === 'neighborhood' ? '#ffffff' : 'transparent',
-                                shadowColor: '#000',
-                                shadowOffset: { width: 0, height: 1 },
-                                shadowOpacity: scope === 'neighborhood' ? 0.1 : 0,
-                                shadowRadius: 2,
-                                elevation: scope === 'neighborhood' ? 2 : 0,
-                            }}
-                        >
-                            <Text style={{ fontWeight: 'bold', fontSize: 12, color: scope === 'neighborhood' ? '#dc2626' : '#6b7280' }}>MAHALLEM</Text>
-                        </Pressable>
-                        <Pressable
-                            onPress={() => setScope('district')}
-                            style={{
-                                flex: 1,
-                                paddingVertical: 8,
-                                alignItems: 'center',
-                                borderRadius: 8,
-                                backgroundColor: scope === 'district' ? '#ffffff' : 'transparent',
-                                shadowColor: '#000',
-                                shadowOffset: { width: 0, height: 1 },
-                                shadowOpacity: scope === 'district' ? 0.1 : 0,
-                                shadowRadius: 2,
-                                elevation: scope === 'district' ? 2 : 0,
-                            }}
-                        >
-                            <Text style={{ fontWeight: 'bold', fontSize: 12, color: scope === 'district' ? '#dc2626' : '#6b7280' }}>İLÇEM</Text>
-                        </Pressable>
-                        <Pressable
-                            onPress={() => setScope('city')}
-                            style={{
-                                flex: 1,
-                                paddingVertical: 8,
-                                alignItems: 'center',
-                                borderRadius: 8,
-                                backgroundColor: scope === 'city' ? '#ffffff' : 'transparent',
-                                shadowColor: '#000',
-                                shadowOffset: { width: 0, height: 1 },
-                                shadowOpacity: scope === 'city' ? 0.1 : 0,
-                                shadowRadius: 2,
-                                elevation: scope === 'city' ? 2 : 0,
-                            }}
-                        >
-                            <Text style={{ fontWeight: 'bold', fontSize: 12, color: scope === 'city' ? '#dc2626' : '#6b7280' }}>İL GENELİ</Text>
-                        </Pressable>
-                    </View>
+                    {/* Content */}
+                    {loading ? (
+                        <View className="flex-1 items-center justify-center">
+                            <ActivityIndicator size="large" color="#ea2a33" />
+                        </View>
+                    ) : (
+                        <FlatList
+                            data={rankings}
+                            renderItem={renderItem}
+                            keyExtractor={item => item.user_id}
+                            contentContainerStyle={{ padding: 16, paddingBottom: 100 }}
+                            refreshControl={
+                                Platform.OS !== 'web' ? <RefreshControl refreshing={refreshing} onRefresh={onRefresh} /> : undefined
+                            }
+                            ListEmptyComponent={
+                                <View className="items-center justify-center py-20">
+                                    <Medal size={48} className="text-gray-300 mb-4" />
+                                    <Text className="text-gray-500 font-medium">Bu kategoride henüz sıralama yok.</Text>
+                                </View>
+                            }
+                        />
+                    )}
                 </View>
-
-                {/* Content */}
-                {loading ? (
-                    <View className="flex-1 items-center justify-center">
-                        <ActivityIndicator size="large" color="#ea2a33" />
-                    </View>
-                ) : (
-                    <FlatList
-                        data={rankings}
-                        renderItem={renderItem}
-                        keyExtractor={item => item.user_id}
-                        contentContainerStyle={{ padding: 16, paddingBottom: 100 }}
-                        ListEmptyComponent={
-                            <View className="items-center justify-center py-20">
-                                <Medal size={48} className="text-gray-300 mb-4" />
-                                <Text className="text-gray-500 font-medium">Bu kategoride henüz sıralama yok.</Text>
-                            </View>
-                        }
-                    />
-                )}
-            </View>
+            </WebPullToRefresh>
         </SafeAreaView>
     );
 }

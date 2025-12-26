@@ -1,8 +1,9 @@
 import { useRouter } from 'expo-router';
 import { CheckCircle2, Video } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, FlatList, Image, RefreshControl, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, FlatList, Image, Platform, RefreshControl, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { WebPullToRefresh } from '../../components/WebPullToRefresh';
 import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
 import { supabase } from '../../lib/supabase';
 import { useAuthStore } from '../../stores/useAuthStore';
@@ -150,65 +151,69 @@ export default function TrainingsScreen() {
 
     return (
         <SafeAreaView className="flex-1 bg-background-light">
-            {/* Header */}
-            <View className="px-4 py-4 border-b border-gray-200 bg-white items-center">
-                <Text className="text-lg font-bold text-slate-900">İçerik Kütüphanesi</Text>
-            </View>
+            <WebPullToRefresh onRefresh={onRefresh}>
+                {/* Header */}
+                <View className="px-4 py-4 border-b border-gray-200 bg-white items-center">
+                    <Text className="text-lg font-bold text-slate-900">İçerik Kütüphanesi</Text>
+                </View>
 
-            {/* Filters */}
-            {userTopics.length > 0 && (
-                <View className="bg-white border-b border-gray-200">
-                    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 12, gap: 8 }}>
-                        <TouchableOpacity
-                            onPress={() => setActiveFilter('Tümü')}
-                            className={`px-4 py-2 rounded-full border ${activeFilter === 'Tümü' ? 'bg-red-600 border-red-600' : 'bg-gray-100 border-gray-200'}`}
-                        >
-                            <Text className={`${activeFilter === 'Tümü' ? 'text-white' : 'text-gray-600'} font-bold text-sm`}>Tümü</Text>
-                        </TouchableOpacity>
-
-                        {userTopics.map(topic => (
+                {/* Filters */}
+                {userTopics.length > 0 && (
+                    <View className="bg-white border-b border-gray-200">
+                        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 12, gap: 8 }}>
                             <TouchableOpacity
-                                key={topic}
-                                onPress={() => setActiveFilter(topic)}
-                                className={`px-4 py-2 rounded-full border ${activeFilter === topic ? 'bg-red-600 border-red-600' : 'bg-gray-100 border-gray-200'}`}
+                                onPress={() => setActiveFilter('Tümü')}
+                                className={`px-4 py-2 rounded-full border ${activeFilter === 'Tümü' ? 'bg-red-600 border-red-600' : 'bg-gray-100 border-gray-200'}`}
                             >
-                                <Text className={`${activeFilter === topic ? 'text-white' : 'text-gray-600'} font-bold text-sm`}>{topic}</Text>
+                                <Text className={`${activeFilter === 'Tümü' ? 'text-white' : 'text-gray-600'} font-bold text-sm`}>Tümü</Text>
                             </TouchableOpacity>
-                        ))}
-                    </ScrollView>
-                </View>
-            )}
 
-            {loading ? (
-                <View className="flex-1 items-center justify-center">
-                    <ActivityIndicator size="large" color="#ea2a33" />
-                </View>
-            ) : (
-                <View style={isDesktop ? { maxWidth: 1200, alignSelf: 'center', width: '100%', flex: 1 } : { flex: 1 }}>
-                    <FlatList
-                        data={filteredTrainings}
-                        renderItem={renderItem}
-                        keyExtractor={item => item.id.toString()}
-                        key={isDesktop ? 'grid' : 'list'}
-                        numColumns={isDesktop ? 2 : 1}
-                        contentContainerStyle={{ padding: 16 }}
-                        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-                        ListEmptyComponent={
-                            <View className="items-center justify-center py-20 px-8">
-                                <View className="w-16 h-16 bg-gray-100 rounded-full items-center justify-center mb-4">
-                                    <Video size={32} color="#9CA3AF" />
+                            {userTopics.map(topic => (
+                                <TouchableOpacity
+                                    key={topic}
+                                    onPress={() => setActiveFilter(topic)}
+                                    className={`px-4 py-2 rounded-full border ${activeFilter === topic ? 'bg-red-600 border-red-600' : 'bg-gray-100 border-gray-200'}`}
+                                >
+                                    <Text className={`${activeFilter === topic ? 'text-white' : 'text-gray-600'} font-bold text-sm`}>{topic}</Text>
+                                </TouchableOpacity>
+                            ))}
+                        </ScrollView>
+                    </View>
+                )}
+
+                {loading ? (
+                    <View className="flex-1 items-center justify-center">
+                        <ActivityIndicator size="large" color="#ea2a33" />
+                    </View>
+                ) : (
+                    <View style={isDesktop ? { maxWidth: 1200, alignSelf: 'center', width: '100%', flex: 1 } : { flex: 1 }}>
+                        <FlatList
+                            data={filteredTrainings}
+                            renderItem={renderItem}
+                            keyExtractor={item => item.id.toString()}
+                            key={isDesktop ? 'grid' : 'list'}
+                            numColumns={isDesktop ? 2 : 1}
+                            contentContainerStyle={{ padding: 16 }}
+                            refreshControl={
+                                Platform.OS !== 'web' ? <RefreshControl refreshing={refreshing} onRefresh={onRefresh} /> : undefined
+                            }
+                            ListEmptyComponent={
+                                <View className="items-center justify-center py-20 px-8">
+                                    <View className="w-16 h-16 bg-gray-100 rounded-full items-center justify-center mb-4">
+                                        <Video size={32} color="#9CA3AF" />
+                                    </View>
+                                    <Text className="text-lg font-bold text-gray-900 text-center mb-2">Henüz içerik yok</Text>
+                                    <Text className="text-gray-500 text-center">
+                                        {activeFilter === 'Tümü'
+                                            ? 'Şu anda kütüphanede görüntülenecek eğitim materyali bulunmuyor.'
+                                            : `"${activeFilter}" konusunda henüz bir içerik bulunmuyor.`}
+                                    </Text>
                                 </View>
-                                <Text className="text-lg font-bold text-gray-900 text-center mb-2">Henüz içerik yok</Text>
-                                <Text className="text-gray-500 text-center">
-                                    {activeFilter === 'Tümü'
-                                        ? 'Şu anda kütüphanede görüntülenecek eğitim materyali bulunmuyor.'
-                                        : `"${activeFilter}" konusunda henüz bir içerik bulunmuyor.`}
-                                </Text>
-                            </View>
-                        }
-                    />
-                </View>
-            )}
+                            }
+                        />
+                    </View>
+                )}
+            </WebPullToRefresh>
         </SafeAreaView>
     );
 }
