@@ -5,7 +5,7 @@ import Link from "next/link";
 
 const AVAILABLE_TOPICS = [
     'Ekonomi', 'Gençlik', 'Aile', 'Adalet', 'Eğitim',
-    'Tarım', 'Şehircilik', 'Dış Politika', 'Sağlık', 'Teknoloji'
+    'Tarım', 'Şehircilik', 'Dış Politika', 'Sağlık', 'Teknoloji', 'D-8'
 ];
 
 export default function TopicReports() {

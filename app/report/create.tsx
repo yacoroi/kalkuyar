@@ -19,7 +19,7 @@ const showAlert = (title: string, message: string) => {
 
 const AVAILABLE_TOPICS = [
     'Ekonomi', 'Gençlik', 'Aile', 'Adalet', 'Eğitim',
-    'Tarım', 'Şehircilik', 'Dış Politika', 'Sağlık', 'Teknoloji'
+    'Tarım', 'Şehircilik', 'Dış Politika', 'Sağlık', 'Teknoloji', 'D-8'
 ];
 
 const CONTACT_TYPES = [

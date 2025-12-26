@@ -15,7 +15,8 @@ const AVAILABLE_TOPICS = [
     'Şehircilik',
     'Dış Politika',
     'Sağlık',
-    'Teknoloji'
+    'Teknoloji',
+    'D-8'
 ];
 
 interface Training {
