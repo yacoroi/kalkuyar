@@ -229,7 +229,7 @@ export default function ProfileScreen() {
             </View>
             <View className="flex-1 bg-white p-4 rounded-xl border border-gray-100 items-center shadow-sm">
               <Text className="text-2xl font-bold text-slate-900">{profile?.season_target || 15}</Text>
-              <Text className="text-xs text-slate-500">Hedef</Text>
+              <Text className="text-xs text-slate-500">Temas Hedefi</Text>
             </View>
             <View className="flex-1 bg-white p-4 rounded-xl border border-gray-100 items-center shadow-sm">
               <Text className="text-2xl font-bold text-slate-900">{profile?.season_contacts || 0}</Text>

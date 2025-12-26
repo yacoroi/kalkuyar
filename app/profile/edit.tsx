@@ -168,7 +168,7 @@ export default function EditProfileScreen() {
 
                     {/* TOPICS SECTION */}
                     <View className="mb-8">
-                        <Text className="text-gray-500 text-xs font-bold uppercase mb-3 ml-1">İlgi Alanları</Text>
+                        <Text className="text-gray-500 text-xs font-bold uppercase mb-3 ml-1">İLGİ ALANLARIM</Text>
                         <View className="flex-row flex-wrap gap-2">
                             {AVAILABLE_TOPICS.map((topic) => {
                                 const isSelected = selectedTopics.includes(topic);

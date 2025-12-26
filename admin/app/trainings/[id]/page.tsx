@@ -166,19 +166,34 @@ export default function EditTrainingPage() {
     };
 
     const handleDelete = async () => {
-        if (!confirm('Bu içeriği silmek istediğinize emin misiniz?')) return;
+        console.log('handleDelete called, id:', id);
+
+        const confirmed = confirm('Bu içeriği silmek istediğinize emin misiniz?');
+        console.log('Confirm result:', confirmed);
+
+        if (!confirmed) return;
 
         setSaving(true);
         try {
-            const { error } = await supabase
+            console.log('Attempting to delete training with id:', id);
+            const { error, data } = await supabase
                 .from('trainings')
                 .delete()
-                .eq('id', id);
+                .eq('id', id)
+                .select();
 
-            if (error) throw error;
+            console.log('Delete response:', { error, data });
+
+            if (error) {
+                console.error('Delete error:', error);
+                throw error;
+            }
+
+            alert('İçerik başarıyla silindi!');
             router.push('/trainings');
             router.refresh();
         } catch (error: any) {
+            console.error('Delete catch error:', error);
             alert('Silme hatası: ' + error.message);
             setSaving(false);
         }
