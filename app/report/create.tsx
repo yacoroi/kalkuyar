@@ -364,7 +364,7 @@ export default function CreateReportScreen() {
                     {/* Membership Invitation */}
                     <View style={errors.membershipStatus ? { padding: 12, borderRadius: 12, borderWidth: 2, borderColor: '#ef4444', backgroundColor: 'rgba(239, 68, 68, 0.05)' } : undefined}>
                         <Text className="font-medium text-[#333] mb-3" style={{ fontSize: scaleFont(16) }} allowFontScaling={false}>
-                            Üyelik Daveti {errors.membershipStatus && <Text style={{ color: '#ef4444' }}>*</Text>}
+                            Üyelik Daveti Yapıldı Mı ? {errors.membershipStatus && <Text style={{ color: '#ef4444' }}>*</Text>}
                         </Text>
                         <View style={{ gap: 12 }}>
                             {MEMBERSHIP_OPTIONS.map((opt) => {
