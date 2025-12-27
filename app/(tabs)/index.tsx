@@ -125,24 +125,53 @@ export default function DashboardScreen() {
   }
 
   async function fetchLatestTraining() {
-    if (!profile?.topics || profile.topics.length === 0) {
+    if (!profile?.topics || profile.topics.length === 0 || !user) {
       setLatestTraining(null);
       return;
     }
 
     try {
-      const { data, error } = await supabase
+      // First get user's read training IDs
+      const { data: readData } = await supabase
+        .from('training_reads')
+        .select('training_id')
+        .eq('user_id', user.id);
+
+      const readIds = readData?.map(r => r.training_id) || [];
+
+      // Then fetch latest unread training from user's topics
+      let query = supabase
         .from('trainings')
         .select('id, title, description, image_url, topic')
         .eq('is_active', true)
         .in('topic', profile.topics)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .maybeSingle();
+        .order('created_at', { ascending: false });
+
+      // Exclude read trainings if any
+      if (readIds.length > 0) {
+        query = query.not('id', 'in', `(${readIds.join(',')})`);
+      }
+
+      const { data, error } = await query.limit(1).maybeSingle();
 
       if (error) {
         console.error('Error fetching latest training:', error);
         setLatestTraining(null);
+        return;
+      }
+
+      // If no unread trainings, show the latest one anyway
+      if (!data) {
+        const { data: fallbackData } = await supabase
+          .from('trainings')
+          .select('id, title, description, image_url, topic')
+          .eq('is_active', true)
+          .in('topic', profile.topics)
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        setLatestTraining(fallbackData);
         return;
       }
 
