@@ -24,8 +24,8 @@ const AVAILABLE_TOPICS = [
 
 const CONTACT_TYPES = [
     { label: 'Aile', value: 'Aile', icon: <Users size={20} color="#333" /> },
+    { label: 'Akraba', value: 'Akraba', icon: <Users size={20} color="#333" /> },
     { label: 'Arkadaş', value: 'Arkadaş', icon: <User size={20} color="#333" /> },
-    { label: 'Grup', value: 'Grup', icon: <Users size={20} color="#333" /> },
     { label: 'Diğer', value: 'Diğer', icon: <MoreHorizontal size={20} color="#333" /> },
 ];
 
