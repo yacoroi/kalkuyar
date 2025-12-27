@@ -89,7 +89,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="trainings"
         options={{
-          title: 'Kütüphane',
+          title: 'Konularım',
           headerShown: false,
           tabBarIcon: ({ color }) => <TabBarIcon name="book" color={color} />,
         }}

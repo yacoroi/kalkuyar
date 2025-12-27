@@ -154,7 +154,7 @@ export default function TrainingsScreen() {
             <WebPullToRefresh onRefresh={onRefresh}>
                 {/* Header */}
                 <View className="px-4 py-4 border-b border-gray-200 bg-white items-center">
-                    <Text className="text-lg font-bold text-slate-900">İçerik Kütüphanesi</Text>
+                    <Text className="text-lg font-bold text-slate-900">Konularım</Text>
                 </View>
 
                 {/* Filters */}
