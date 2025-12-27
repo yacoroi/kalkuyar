@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
-import { Check, ChevronDown, MapPin, Shield, User, X } from 'lucide-react-native';
-import React, { useState } from 'react';
+import { Check, ChevronDown, CreditCard, MapPin, Shield, User, X } from 'lucide-react-native';
+import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Modal, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { DISTRICTS, getNeighborhoods } from '../../constants/locations';
 import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
@@ -10,15 +10,29 @@ import { useAuthStore } from '../../stores/useAuthStore';
 export default function RegisterScreen() {
     const router = useRouter();
     const session = useAuthStore(state => state.session);
+    const profile = useAuthStore(state => state.profile);
     const { isDesktop } = useResponsiveLayout();
 
     const [fullName, setFullName] = useState('');
+    const [tcKimlik, setTcKimlik] = useState('');
     const [city] = useState('İstanbul'); // Fixed City
     const [district, setDistrict] = useState('');
     const [neighborhood, setNeighborhood] = useState('');
     const [loading, setLoading] = useState(false);
     const [kvkkAccepted, setKvkkAccepted] = useState(false);
     const [showKvkkModal, setShowKvkkModal] = useState(false);
+
+    // Pre-fill from existing profile (for returning users without TC)
+    useEffect(() => {
+        if (profile) {
+            if (profile.full_name) setFullName(profile.full_name);
+            if (profile.district) setDistrict(profile.district);
+            if (profile.neighborhood) setNeighborhood(profile.neighborhood);
+            if (profile.tc_kimlik) setTcKimlik(profile.tc_kimlik);
+            // If user already has profile data, assume KVKK was accepted
+            if (profile.full_name && profile.district) setKvkkAccepted(true);
+        }
+    }, [profile]);
 
     // Modal State
     const [modalVisible, setModalVisible] = useState(false);
@@ -52,9 +66,22 @@ export default function RegisterScreen() {
     };
 
 
+    // TC Kimlik validasyonu (11 haneli rakam)
+    const isValidTcKimlik = (tc: string) => /^\d{11}$/.test(tc);
+
     async function completeProfile() {
-        if (!fullName || !city || !district || !neighborhood) {
-            const message = 'Lütfen İsim, İl, İlçe ve Mahalle bilgilerini doldurunuz.';
+        if (!fullName || !tcKimlik || !city || !district || !neighborhood) {
+            const message = 'Lütfen tüm alanları doldurunuz.';
+            if (Platform.OS === 'web') {
+                window.alert(message);
+            } else {
+                Alert.alert('Hata', message);
+            }
+            return;
+        }
+
+        if (!isValidTcKimlik(tcKimlik)) {
+            const message = 'TC Kimlik numarası 11 haneli olmalıdır.';
             if (Platform.OS === 'web') {
                 window.alert(message);
             } else {
@@ -81,11 +108,30 @@ export default function RegisterScreen() {
 
         setLoading(true);
 
+        // TC Kimlik ile referans kodu lookup
+        let referansKodu: string | null = null;
+        try {
+            const { data: tcData } = await supabase
+                .from('tc_referans')
+                .select('referans_kodu')
+                .eq('tc_kimlik', tcKimlik)
+                .limit(1);
+
+            if (tcData && tcData.length > 0) {
+                referansKodu = tcData[0].referans_kodu;
+            }
+        } catch (e) {
+            // TC not found in lookup table, continue without referans
+            console.log('TC lookup failed:', e);
+        }
+
         const { error } = await supabase
             .from('profiles')
             .upsert({
                 id: session.user.id,
                 full_name: fullName,
+                tc_kimlik: tcKimlik,
+                referans_kodu: referansKodu,
                 city,
                 district,
                 neighborhood,
@@ -138,6 +184,28 @@ export default function RegisterScreen() {
                                         <User size={18} color="#d91f26" />
                                     </View>
                                 </View>
+                            </View>
+
+                            {/* TC Kimlik */}
+                            <View>
+                                <Text className="text-[#555] font-semibold mb-2 ml-1 text-sm">TC Kimlik No</Text>
+                                <View className={`flex-row items-center bg-[#faecec] rounded-xl border h-12 ${tcKimlik && !isValidTcKimlik(tcKimlik) ? 'border-red-500' : 'border-[#e0c0c0]'}`}>
+                                    <TextInput
+                                        className="flex-1 px-4 text-[#333] text-base h-full"
+                                        placeholder="11 Haneli TC Kimlik No"
+                                        placeholderTextColor="#999"
+                                        value={tcKimlik}
+                                        onChangeText={(text) => setTcKimlik(text.replace(/[^0-9]/g, '').slice(0, 11))}
+                                        keyboardType="numeric"
+                                        maxLength={11}
+                                    />
+                                    <View className="px-3">
+                                        <CreditCard size={18} color={tcKimlik && !isValidTcKimlik(tcKimlik) ? '#ef4444' : '#d91f26'} />
+                                    </View>
+                                </View>
+                                {tcKimlik && !isValidTcKimlik(tcKimlik) && (
+                                    <Text className="text-red-500 text-xs mt-1 ml-1">TC Kimlik 11 haneli olmalıdır</Text>
+                                )}
                             </View>
 
                             {/* City (Read Only) */}
@@ -313,35 +381,115 @@ export default function RegisterScreen() {
                         {/* Content */}
                         <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 20 }}>
                             <Text style={{ fontSize: 14, lineHeight: 22, color: '#444', marginBottom: 16 }}>
-                                Bu aydınlatma metni, 6698 sayılı Kişisel Verilerin Korunması Kanunu ("KVKK") kapsamında hazırlanmıştır.
+                                6698 sayılı Kişisel Verilerin Korunması Kanunu ("KVKK") uyarınca, Saadet Partisi İstanbul İl Başkanlığı olarak kişisel verilerinizin güvenliği ve gizliliği konusundaki yükümlülüklerimizi yerine getirmek amacıyla işbu Aydınlatma Metni'ni hazırlamış bulunmaktayız. Uygulamayı kullanmaya başlamadan önce bu metni dikkatle okumanızı rica ederiz.
                             </Text>
 
                             <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#333', marginBottom: 8 }}>1. Veri Sorumlusu</Text>
                             <Text style={{ fontSize: 14, lineHeight: 22, color: '#444', marginBottom: 16 }}>
-                                Kişisel verileriniz, veri sorumlusu sıfatıyla Saadet Partisi tarafından işlenmektedir.
+                                6698 sayılı Kişisel Verilerin Korunması Kanunu kapsamında "Veri Sorumlusu" sıfatıyla hareket eden:{'\n\n'}
+                                <Text style={{ fontWeight: 'bold' }}>Saadet Partisi İstanbul İl Başkanlığı</Text>{'\n'}
+                                Adres: SAADET PLAZA, Maltepe, Mevlevihane Yolu Cd. No:13, 34010 Zeytinburnu/İstanbul{'\n'}
+                                Telefon: (0212) 483 51 77
                             </Text>
 
-                            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#333', marginBottom: 8 }}>2. İşlenen Kişisel Veriler</Text>
+                            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#333', marginBottom: 8 }}>2. İşlenen Kişisel Veriler ve Kategorileri</Text>
                             <Text style={{ fontSize: 14, lineHeight: 22, color: '#444', marginBottom: 16 }}>
-                                • Ad-Soyad{'\n'}
-                                • İl, İlçe, Mahalle bilgileri{'\n'}
-                                • Konum bilgileri{'\n'}
-                                • Uygulama kullanım verileri
+                                Tarafınızdan talep edilen ve/veya uygulama kullanımı sırasında otomatik olarak elde edilen kişisel verileriniz aşağıda kategorilendirilmiştir:{'\n\n'}
+                                <Text style={{ fontWeight: 'bold' }}>Kimlik Verileri:</Text> Ad, soyad, T.C. kimlik numarası{'\n'}
+                                <Text style={{ fontWeight: 'bold' }}>İletişim Verileri:</Text> Telefon numarası{'\n'}
+                                <Text style={{ fontWeight: 'bold' }}>Lokasyon Verileri:</Text> İl, ilçe, mahalle bilgileri{'\n'}
+                                <Text style={{ fontWeight: 'bold' }}>Performans ve Aktivite Verileri:</Text> Görev tamamlama bilgileri, saha çalışması raporları, uygulama içi etkileşimler
                             </Text>
 
-                            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#333', marginBottom: 8 }}>3. İşleme Amaçları</Text>
+                            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#333', marginBottom: 8 }}>3. Kişisel Verilerin İşlenme Amaçları</Text>
                             <Text style={{ fontSize: 14, lineHeight: 22, color: '#444', marginBottom: 16 }}>
-                                Kişisel verileriniz, saha çalışmalarının koordinasyonu, görev dağıtımı ve iletişim amaçlarıyla işlenmektedir.
+                                Toplanan kişisel verileriniz aşağıdaki amaçlarla işlenmektedir:{'\n\n'}
+                                • Parti üyelik süreçlerinin yürütülmesi ve takibi{'\n'}
+                                • Saha çalışmaları ve vatandaş ziyaretlerinin koordinasyonu{'\n'}
+                                • Görev dağıtımı, takibi ve performans değerlendirmesi{'\n'}
+                                • Parti içi iletişim ve bilgilendirme faaliyetleri{'\n'}
+                                • Etkinlik, toplantı ve miting organizasyonları{'\n'}
+                                • İstatistiksel analizler ve raporlama{'\n'}
+                                • Yasal düzenlemeler kapsamında zorunlu bildirimler{'\n'}
+                                • Kullanıcı deneyiminin iyileştirilmesi{'\n'}
+                                • Bilgi güvenliği süreçlerinin yürütülmesi
                             </Text>
 
-                            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#333', marginBottom: 8 }}>4. Haklarınız</Text>
+                            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#333', marginBottom: 8 }}>4. Kişisel Verilerin Toplanma Yöntemi ve Hukuki Sebebi</Text>
                             <Text style={{ fontSize: 14, lineHeight: 22, color: '#444', marginBottom: 16 }}>
-                                KVKK'nın 11. maddesi kapsamında; kişisel verilerinize erişim, düzeltme, silme ve itiraz haklarına sahipsiniz.
+                                Kişisel verileriniz, mobil uygulama üzerinden elektronik ortamda, tamamen veya kısmen otomatik yöntemlerle toplanmaktadır.{'\n\n'}
+                                <Text style={{ fontWeight: 'bold' }}>Hukuki Sebepler:</Text>{'\n'}
+                                • KVKK md. 5/1: Açık rızanız{'\n'}
+                                • KVKK md. 5/2-c: Sözleşmenin ifası{'\n'}
+                                • KVKK md. 5/2-ç: Hukuki yükümlülüğün yerine getirilmesi{'\n'}
+                                • KVKK md. 5/2-f: Veri sorumlusunun meşru menfaati
                             </Text>
 
-                            <Text style={{ fontSize: 12, color: '#888', marginTop: 16, fontStyle: 'italic' }}>
-                                Bu metin daha sonra güncellenecektir. Lütfen güncel metni parti web sitesinden kontrol ediniz.
+                            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#333', marginBottom: 8 }}>5. Kişisel Verilerin Aktarılması</Text>
+                            <Text style={{ fontSize: 14, lineHeight: 22, color: '#444', marginBottom: 16 }}>
+                                Kişisel verileriniz, yukarıda belirtilen amaçlarla sınırlı olmak ve KVKK'nın 8. ve 9. maddelerinde belirtilen şartlara uygun olarak aşağıdaki taraflara aktarılabilecektir:{'\n\n'}
+                                <Text style={{ fontWeight: 'bold' }}>Yurt İçi Aktarımlar:</Text>{'\n'}
+                                • Saadet Partisi Genel Merkezi ve ilçe teşkilatları{'\n'}
+                                • Yasal zorunluluk halinde yetkili kamu kurum ve kuruluşları{'\n'}
+                                • Teknik altyapı hizmeti veren iş ortaklarımız{'\n\n'}
+                                <Text style={{ fontWeight: 'bold' }}>Yurt Dışı Aktarımlar:</Text>{'\n'}
+                                Kişisel verileriniz yurt dışına aktarılmamaktadır. Ancak bulut tabanlı hizmetler kullanılması halinde, KVKK'nın 9. maddesi kapsamında gerekli güvenceler sağlanacaktır.
                             </Text>
+
+                            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#333', marginBottom: 8 }}>6. Kişisel Verilerin Saklanma Süresi</Text>
+                            <Text style={{ fontSize: 14, lineHeight: 22, color: '#444', marginBottom: 16 }}>
+                                Kişisel verileriniz, işleme amacının gerektirdiği süre boyunca ve ilgili mevzuatta öngörülen zamanaşımı süreleri boyunca saklanacaktır:{'\n\n'}
+                                • Üyelik verileri: Üyelik süresince ve sonrasında 10 yıl{'\n'}
+                                • Saha çalışması raporları: 5 yıl{'\n'}
+                                • İşlem güvenliği verileri: 2 yıl{'\n'}
+                                • Konum verileri: 1 yıl{'\n\n'}
+                                Saklama süresinin sona ermesi halinde verileriniz KVKK'nın 7. maddesi ve Kişisel Verilerin Silinmesi, Yok Edilmesi veya Anonim Hale Getirilmesi Hakkında Yönetmelik hükümlerine uygun olarak imha edilecektir.
+                            </Text>
+
+                            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#333', marginBottom: 8 }}>7. Veri Güvenliği Tedbirleri</Text>
+                            <Text style={{ fontSize: 14, lineHeight: 22, color: '#444', marginBottom: 16 }}>
+                                Kişisel verilerinizin güvenliği için aşağıdaki teknik ve idari tedbirler alınmaktadır:{'\n\n'}
+                                <Text style={{ fontWeight: 'bold' }}>Teknik Tedbirler:</Text>{'\n'}
+                                • SSL/TLS şifreleme protokolleri{'\n'}
+                                • Güvenli sunucu altyapısı{'\n'}
+                                • Erişim loglarının tutulması{'\n'}
+                                • Güvenlik duvarı ve saldırı tespit sistemleri{'\n\n'}
+                                <Text style={{ fontWeight: 'bold' }}>İdari Tedbirler:</Text>{'\n'}
+                                • Erişim yetki matrisi uygulaması{'\n'}
+                                • Çalışan gizlilik taahhütnameleri{'\n'}
+                                • Periyodik güvenlik denetimleri
+                            </Text>
+
+                            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#333', marginBottom: 8 }}>8. İlgili Kişi Olarak Haklarınız</Text>
+                            <Text style={{ fontSize: 14, lineHeight: 22, color: '#444', marginBottom: 16 }}>
+                                KVKK'nın 11. maddesi uyarınca aşağıdaki haklara sahipsiniz:{'\n\n'}
+                                a) Kişisel verilerinizin işlenip işlenmediğini öğrenme,{'\n'}
+                                b) Kişisel verileriniz işlenmişse buna ilişkin bilgi talep etme,{'\n'}
+                                c) Kişisel verilerinizin işlenme amacını ve bunların amacına uygun kullanılıp kullanılmadığını öğrenme,{'\n'}
+                                d) Yurt içinde veya yurt dışında kişisel verilerinizin aktarıldığı üçüncü kişileri bilme,{'\n'}
+                                e) Kişisel verilerinizin eksik veya yanlış işlenmiş olması hâlinde bunların düzeltilmesini isteme,{'\n'}
+                                f) KVKK'nın 7. maddesinde öngörülen şartlar çerçevesinde kişisel verilerinizin silinmesini veya yok edilmesini isteme,{'\n'}
+                                g) (e) ve (f) bentleri uyarınca yapılan işlemlerin, kişisel verilerin aktarıldığı üçüncü kişilere bildirilmesini isteme,{'\n'}
+                                h) İşlenen verilerin münhasıran otomatik sistemler vasıtasıyla analiz edilmesi suretiyle kişinin kendisi aleyhine bir sonucun ortaya çıkmasına itiraz etme,{'\n'}
+                                i) Kişisel verilerin kanuna aykırı olarak işlenmesi sebebiyle zarara uğraması hâlinde zararın giderilmesini talep etme.
+                            </Text>
+
+                            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#333', marginBottom: 8 }}>9. Haklarınızı Kullanma Yöntemi</Text>
+                            <Text style={{ fontSize: 14, lineHeight: 22, color: '#444', marginBottom: 16 }}>
+                                Yukarıda belirtilen haklarınızı kullanmak için kimliğinizi tespit edici belgeler ile birlikte ıslak imzalı dilekçenizi Saadet Partisi İstanbul İl Başkanlığı adresine bizzat veya noter aracılığıyla iletebilirsiniz.{'\n\n'}
+                                Başvurularınız en geç 30 (otuz) gün içinde sonuçlandırılacaktır. İşlemin ayrıca bir maliyeti gerektirmesi hâlinde, Kişisel Verileri Koruma Kurulu tarafından belirlenen tarifedeki ücret alınabilir.
+                            </Text>
+
+                            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#333', marginBottom: 8 }}>10. Aydınlatma Metninde Yapılacak Değişiklikler</Text>
+                            <Text style={{ fontSize: 14, lineHeight: 22, color: '#444', marginBottom: 16 }}>
+                                İşbu Aydınlatma Metni, yasal düzenlemeler ve kurumsal ihtiyaçlar doğrultusunda güncellenebilir. Güncellemeler, uygulama üzerinden veya resmi iletişim kanalları aracılığıyla tarafınıza bildirilecektir. Uygulamayı kullanmaya devam etmeniz, güncellenmiş metni kabul ettiğiniz anlamına gelecektir.
+                            </Text>
+
+                            <View style={{ backgroundColor: '#f0f0f0', padding: 12, borderRadius: 8, marginTop: 8 }}>
+                                <Text style={{ fontSize: 12, color: '#666', textAlign: 'center', lineHeight: 18 }}>
+                                    Bu Aydınlatma Metni'ni okuduğunuzu ve kişisel verilerinizin yukarıda belirtilen şekilde işlenmesini kabul ettiğinizi beyan etmektesiniz.
+                                </Text>
+                            </View>
 
                             <View style={{ height: 40 }} />
                         </ScrollView>

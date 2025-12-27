@@ -13,6 +13,8 @@ export interface Profile {
     created_at: string;
     season_contacts?: number;
     season_target?: number;
+    tc_kimlik: string | null;
+    referans_kodu: string | null;
 }
 
 export interface SurveyQuestion {

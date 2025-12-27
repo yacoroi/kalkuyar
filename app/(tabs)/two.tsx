@@ -25,7 +25,8 @@ export default function ProfileScreen() {
   const [uploading, setUploading] = useState(false);
   const [stats, setStats] = useState({
     tasksDone: 0,
-    peopleReached: 0
+    peopleReached: 0,
+    monthlyMembers: 0
   });
   const [achievements, setAchievements] = useState<LeaderboardHistoryItem[]>([]);
 
@@ -140,6 +141,21 @@ export default function ProfileScreen() {
 
       const totalPeople = reportData?.reduce((sum, report) => sum + (report.people_count || 1), 0) || 0;
 
+      // Fetch monthly member registrations
+      const startOfMonth = new Date();
+      startOfMonth.setDate(1);
+      startOfMonth.setHours(0, 0, 0, 0);
+
+      const { count: memberCount, error: memberError } = await supabase
+        .from('member_registrations')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', profile.id)
+        .gte('created_at', startOfMonth.toISOString());
+
+      if (memberError) {
+        console.error('Error fetching member count:', memberError);
+      }
+
       // Fetch History Achievements
       const { data: historyData, error: historyError } = await supabase
         .from('leaderboard_history')
@@ -153,7 +169,8 @@ export default function ProfileScreen() {
 
       setStats({
         tasksDone: taskCount || 0,
-        peopleReached: totalPeople
+        peopleReached: totalPeople,
+        monthlyMembers: memberCount || 0
       });
       setAchievements((historyData as LeaderboardHistoryItem[]) || []);
     } catch (e) {
@@ -220,18 +237,22 @@ export default function ProfileScreen() {
           </View>
 
           {/* STATS ROW */}
-          <View className="flex-row gap-3 px-4 mb-6">
-            <View className="flex-1 bg-white p-4 rounded-xl border border-gray-100 items-center shadow-sm">
-              <Text className="text-2xl font-bold text-slate-900">{profile?.points || 0}</Text>
+          <View className="flex-row gap-2 px-4 mb-6">
+            <View className="flex-1 bg-white p-3 rounded-xl border border-gray-100 items-center shadow-sm">
+              <Text className="text-xl font-bold text-slate-900">{profile?.points || 0}</Text>
               <Text className="text-xs text-slate-500">Puan</Text>
             </View>
-            <View className="flex-1 bg-white p-4 rounded-xl border border-gray-100 items-center shadow-sm">
-              <Text className="text-2xl font-bold text-slate-900">{profile?.season_target || 15}</Text>
-              <Text className="text-xs text-slate-500">Temas Hedefi</Text>
+            <View className="flex-1 bg-white p-3 rounded-xl border border-gray-100 items-center shadow-sm">
+              <Text className="text-xl font-bold text-slate-900">{profile?.season_target || 15}</Text>
+              <Text className="text-xs text-slate-500">Hedef</Text>
             </View>
-            <View className="flex-1 bg-white p-4 rounded-xl border border-gray-100 items-center shadow-sm">
-              <Text className="text-2xl font-bold text-slate-900">{profile?.season_contacts || 0}</Text>
+            <View className="flex-1 bg-white p-3 rounded-xl border border-gray-100 items-center shadow-sm">
+              <Text className="text-xl font-bold text-slate-900">{profile?.season_contacts || 0}</Text>
               <Text className="text-xs text-slate-500">Temas</Text>
+            </View>
+            <View className="flex-1 bg-white p-3 rounded-xl border border-gray-100 items-center shadow-sm">
+              <Text className="text-xl font-bold text-slate-900">{stats.monthlyMembers}</Text>
+              <Text className="text-xs text-slate-500">Üye</Text>
             </View>
           </View>
 

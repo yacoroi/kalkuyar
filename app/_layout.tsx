@@ -94,13 +94,18 @@ export default function RootLayout() {
       router.replace('/(auth)/login');
     } else if (session) {
       // We have a session
-      if (profile && (!profile.topics || profile.topics.length === 0)) {
+      if (profile && !profile.tc_kimlik) {
+        // Profile loaded but no TC Kimlik, redirect to register to complete
+        if (segments[1] !== 'register') {
+          router.replace('/(auth)/register');
+        }
+      } else if (profile && (!profile.topics || profile.topics.length === 0)) {
         // Profile loaded but no topics, redirect to topics if not already there
         if (segments[1] !== 'topics') {
           router.replace('/(auth)/topics');
         }
       } else if (inAuthGroup) {
-        if (profile?.topics && profile.topics.length > 0) {
+        if (profile?.topics && profile.topics.length > 0 && profile?.tc_kimlik) {
           router.replace('/(tabs)');
         }
       }
