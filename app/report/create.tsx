@@ -42,8 +42,8 @@ const MEMBERSHIP_OPTIONS = [
     { label: 'İstemiyor', value: 'üyelik_istemiyor' },
 ];
 
-// Generate number options 1-100 plus "100+"
-const NUMBER_OPTIONS = [...Array.from({ length: 100 }, (_, i) => (i + 1).toString()), '100+'];
+// Generate number options 1-30 plus "30+"
+const NUMBER_OPTIONS = [...Array.from({ length: 30 }, (_, i) => (i + 1).toString()), '30+'];
 
 export default function CreateReportScreen() {
     const router = useRouter();
@@ -84,7 +84,7 @@ export default function CreateReportScreen() {
             missingFields.push('• Üyelik Durumu');
             newErrors.membershipStatus = true;
         }
-        if (!peopleCount || (peopleCount !== '100+' && (isNaN(Number(peopleCount)) || Number(peopleCount) < 1))) {
+        if (!peopleCount || (peopleCount !== '30+' && (isNaN(Number(peopleCount)) || Number(peopleCount) < 1))) {
             missingFields.push('• Kişi Sayısı');
             newErrors.peopleCount = true;
         }
@@ -116,7 +116,7 @@ export default function CreateReportScreen() {
                     reaction: reaction,
                     membership_status: Object.keys(membershipCounts).length > 0 ? Object.keys(membershipCounts)[0] : null,
                     membership_counts: membershipCounts, // JSONB with all selected types and counts
-                    people_count: peopleCount === '100+' ? 100 : Number(peopleCount),
+                    people_count: peopleCount === '30+' ? 30 : Number(peopleCount),
                     feedback_note: notes || '',
                     location_lat: 0,
                     location_lng: 0
