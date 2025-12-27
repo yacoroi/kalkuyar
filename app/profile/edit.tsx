@@ -29,6 +29,7 @@ export default function EditProfileScreen() {
 
     // Form State
     const [fullName, setFullName] = useState(profile?.full_name || '');
+    const [tcKimlik, setTcKimlik] = useState(profile?.tc_kimlik || '');
     const [city, setCity] = useState(profile?.city || 'İstanbul');
     const [district, setDistrict] = useState(profile?.district || '');
     const [neighborhood, setNeighborhood] = useState(profile?.neighborhood || '');
@@ -52,12 +53,32 @@ export default function EditProfileScreen() {
             return;
         }
 
+        // TC Kimlik validation (if provided)
+        if (tcKimlik && (tcKimlik.length !== 11 || !/^\d+$/.test(tcKimlik))) {
+            Alert.alert('Hata', 'TC Kimlik numarası 11 haneli sayısal değer olmalıdır.');
+            return;
+        }
+
         setLoading(true);
         try {
+            // Check if TC Kimlik changed and lookup referans_kodu
+            let referansKodu = profile?.referans_kodu;
+            if (tcKimlik && tcKimlik !== profile?.tc_kimlik) {
+                const { data: tcData } = await supabase
+                    .from('tc_referans')
+                    .select('referans_kodu')
+                    .eq('tc_kimlik', tcKimlik)
+                    .limit(1);
+
+                referansKodu = tcData && tcData.length > 0 ? tcData[0].referans_kodu : null;
+            }
+
             const { error } = await supabase
                 .from('profiles')
                 .update({
                     full_name: fullName,
+                    tc_kimlik: tcKimlik || null,
+                    referans_kodu: referansKodu,
                     city,
                     district,
                     neighborhood,
@@ -128,6 +149,22 @@ export default function EditProfileScreen() {
                             className="bg-white border border-gray-200 rounded-xl px-4 py-4 text-gray-900 font-medium"
                             placeholder="Adınız Soyadınız"
                         />
+                    </View>
+
+                    {/* TC Kimlik */}
+                    <View className="mb-6">
+                        <Text className="text-gray-500 text-xs font-bold uppercase mb-2 ml-1">TC Kimlik No</Text>
+                        <TextInput
+                            value={tcKimlik}
+                            onChangeText={(text) => setTcKimlik(text.replace(/[^0-9]/g, '').slice(0, 11))}
+                            className="bg-white border border-gray-200 rounded-xl px-4 py-4 text-gray-900 font-medium"
+                            placeholder="11 haneli TC Kimlik numarası"
+                            keyboardType="numeric"
+                            maxLength={11}
+                        />
+                        {tcKimlik.length > 0 && tcKimlik.length !== 11 && (
+                            <Text className="text-red-500 text-xs mt-1 ml-1">{11 - tcKimlik.length} hane daha giriniz</Text>
+                        )}
                     </View>
 
                     {/* City (Disabled/Fixed) */}
