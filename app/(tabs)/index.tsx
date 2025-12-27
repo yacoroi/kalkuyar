@@ -1,6 +1,6 @@
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
-import { BookOpen, ClipboardList, Flame, MapPin, Trophy, User as UserIcon } from 'lucide-react-native';
+import { BookOpen, ClipboardList, MapPin, Trophy, User as UserIcon } from 'lucide-react-native';
 import React, { useEffect } from 'react';
 import { ActivityIndicator, Dimensions, FlatList, Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -388,6 +388,7 @@ export default function DashboardScreen() {
                   <Text className="text-yellow-800 font-extrabold" style={{ fontSize: scaleFont(16) }} allowFontScaling={false}>{profile?.points || 0} Puan</Text>
                 </View>
 
+                {/* STREAK DISABLED - Keep for future use
                 {(() => {
                   // Check if streak is valid (last report today or yesterday)
                   const isStreakValid = () => {
@@ -412,6 +413,7 @@ export default function DashboardScreen() {
                     </View>
                   ) : null;
                 })()}
+                */}
               </View>
             </View>
           </View>
