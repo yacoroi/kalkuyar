@@ -17,6 +17,9 @@ export default function RootLayout({
       <head>
         <title>KalkUyar - Yönetim Paneli</title>
         <meta name="description" content="Teşkilat Operasyon Yönetimi" />
+        {/* Prevent search engine indexing */}
+        <meta name="robots" content="noindex, nofollow" />
+        <meta name="googlebot" content="noindex, nofollow" />
       </head>
       <body className={`${inter.className} bg-gray-50/50 min-h-screen`}>
         <Sidebar />
