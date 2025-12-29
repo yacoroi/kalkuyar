@@ -35,25 +35,27 @@ export default function Root({ children }: { children: React.ReactNode }) {
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, viewport-fit=cover" />
 
         {/* Basic SEO Meta Tags */}
-        <title>{APP_NAME}</title>
+        <title>KalkUyar - Saha Operasyon Yönetim Uygulaması</title>
         <meta name="description" content={APP_DESCRIPTION} />
-        <meta name="keywords" content="kalkuyar, saha uygulaması, teşkilat, operasyon, mobil uygulama" />
+        <meta name="keywords" content="kalkuyar, saha uygulaması, teşkilat, operasyon, mobil uygulama, sahada takip" />
         <meta name="author" content="KalkUyar" />
         <link rel="canonical" href={APP_URL} />
 
         {/* Open Graph Meta Tags */}
         <meta property="og:type" content="website" />
         <meta property="og:url" content={APP_URL} />
-        <meta property="og:title" content={APP_NAME} />
+        <meta property="og:title" content="KalkUyar - Saha Operasyon Yönetim Uygulaması" />
         <meta property="og:description" content={APP_DESCRIPTION} />
         <meta property="og:image" content={APP_IMAGE} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
         <meta property="og:locale" content="tr_TR" />
         <meta property="og:site_name" content={APP_NAME} />
 
         {/* Twitter Card Meta Tags */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:url" content={APP_URL} />
-        <meta name="twitter:title" content={APP_NAME} />
+        <meta name="twitter:title" content="KalkUyar - Saha Operasyon Yönetim Uygulaması" />
         <meta name="twitter:description" content={APP_DESCRIPTION} />
         <meta name="twitter:image" content={APP_IMAGE} />
 
