@@ -12,7 +12,8 @@ const INJECTED_JS = `
 (function() {
     // Keywords for successful NEW member registration
     const successKeywords = [
-        'başarılı', 'başarıyla', 'tamamlandı', 'kaydedildi', 'kayıt oluşturuldu',
+        'üye kayıt işlemi başarıyla gerçekleştirildi',
+        'başarıyla gerçekleştirildi', 'başarılı', 'başarıyla', 'tamamlandı', 'kaydedildi', 'kayıt oluşturuldu',
         'teşekkür', 'teşekkürler', 'hoş geldiniz', 'hoşgeldiniz',
         'üyelik alındı', 'kayıt alındı', 'başvuru alındı', 'başvurunuz alındı',
         'üyeliğiniz oluşturuldu', 'successful', 'completed', 'registered'
