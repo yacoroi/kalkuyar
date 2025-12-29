@@ -37,7 +37,7 @@ export default function EditProfileScreen() {
 
     // Modal State for Selectors
     const [modalVisible, setModalVisible] = useState(false);
-    const [modalType, setModalType] = useState<'district' | 'neighborhood' | null>(null);
+    const [modalType, setModalType] = useState<'district' | 'neighborhood' | 'delete_confirm' | null>(null);
 
     const toggleTopic = (topic: string) => {
         if (selectedTopics.includes(topic)) {
@@ -244,6 +244,36 @@ export default function EditProfileScreen() {
                         )}
                     </TouchableOpacity>
 
+                    {/* Delete Account Section */}
+                    <View className="mt-8 mb-12 border-t border-gray-200 pt-8">
+                        <Text className="text-red-600 font-bold text-lg mb-2">Hesabı Sil</Text>
+                        <Text className="text-gray-500 text-sm mb-4">
+                            Hesabınızı sildiğinizde tüm verileriniz kalıcı olarak silinecektir. Bu işlem geri alınamaz.
+                        </Text>
+                        <TouchableOpacity
+                            onPress={() => {
+                                Alert.alert(
+                                    'Hesabı Sil',
+                                    'Hesabınızı silmek istediğinize emin misiniz? Bu işlem geri alınamaz.',
+                                    [
+                                        { text: 'Vazgeç', style: 'cancel' },
+                                        {
+                                            text: 'Evet, Sil',
+                                            style: 'destructive',
+                                            onPress: () => {
+                                                setModalType('delete_confirm');
+                                                setModalVisible(true);
+                                            }
+                                        }
+                                    ]
+                                );
+                            }}
+                            className="bg-red-50 border border-red-200 rounded-xl py-4 flex-row items-center justify-center gap-2"
+                        >
+                            <Text className="text-red-600 font-bold text-lg">Hesabımı Kalıcı Olarak Sil</Text>
+                        </TouchableOpacity>
+                    </View>
+
                 </ScrollView>
             </KeyboardAvoidingView>
 
@@ -254,30 +284,93 @@ export default function EditProfileScreen() {
                 visible={modalVisible}
                 onRequestClose={() => setModalVisible(false)}
             >
-                <View className="flex-1 justify-end bg-black/50">
-                    <View className="bg-white rounded-t-3xl h-[60%]">
-                        <View className="p-4 border-b border-gray-100 flex-row justify-between items-center">
-                            <Text className="text-lg font-bold text-gray-900">
-                                {modalType === 'district' ? 'İlçe Seçiniz' : 'Mahalle Seçiniz'}
-                            </Text>
-                            <TouchableOpacity onPress={() => setModalVisible(false)} className="p-2">
-                                <Text className="text-primary font-bold">Kapat</Text>
-                            </TouchableOpacity>
-                        </View>
-                        <ScrollView contentContainerStyle={{ padding: 16 }}>
-                            {getListItems().map((item, index) => (
-                                <TouchableOpacity
-                                    key={index}
-                                    onPress={() => handleSelect(item)}
-                                    className="py-4 border-b border-gray-50 active:bg-gray-50"
-                                >
-                                    <Text className="text-gray-700 font-medium text-base">{item}</Text>
+                {modalType === 'delete_confirm' ? (
+                    <DeleteConfirmationModal
+                        onClose={() => setModalVisible(false)}
+                        onConfirm={async () => {
+                            setModalVisible(false);
+                            setLoading(true);
+                            try {
+                                const { error } = await supabase.rpc('delete_own_account');
+                                if (error) throw error;
+                                await supabase.auth.signOut();
+                                router.replace('/(auth)/login');
+                            } catch (e: any) {
+                                Alert.alert('Hata', 'Hesap silinirken bir hata oluştu: ' + e.message);
+                                setLoading(false);
+                            }
+                        }}
+                    />
+                ) : (
+                    <View className="flex-1 justify-end bg-black/50">
+                        <View className="bg-white rounded-t-3xl h-[60%]">
+                            <View className="p-4 border-b border-gray-100 flex-row justify-between items-center">
+                                <Text className="text-lg font-bold text-gray-900">
+                                    {modalType === 'district' ? 'İlçe Seçiniz' : 'Mahalle Seçiniz'}
+                                </Text>
+                                <TouchableOpacity onPress={() => setModalVisible(false)} className="p-2">
+                                    <Text className="text-primary font-bold">Kapat</Text>
                                 </TouchableOpacity>
-                            ))}
-                        </ScrollView>
+                            </View>
+                            <ScrollView contentContainerStyle={{ padding: 16 }}>
+                                {getListItems().map((item, index) => (
+                                    <TouchableOpacity
+                                        key={index}
+                                        onPress={() => handleSelect(item)}
+                                        className="py-4 border-b border-gray-50 active:bg-gray-50"
+                                    >
+                                        <Text className="text-gray-700 font-medium text-base">{item}</Text>
+                                    </TouchableOpacity>
+                                ))}
+                            </ScrollView>
+                        </View>
                     </View>
-                </View>
+                )}
             </Modal>
         </SafeAreaView>
+    );
+}
+
+
+function DeleteConfirmationModal({ onClose, onConfirm }: { onClose: () => void, onConfirm: () => void }) {
+    const [confirmText, setConfirmText] = useState('');
+    const isMatch = confirmText === 'SIL';
+
+    return (
+        <View className="flex-1 justify-center items-center bg-black/60 px-4">
+            <View className="bg-white rounded-2xl w-full max-w-sm p-6">
+                <Text className="text-xl font-bold text-gray-900 mb-2">Son Onay</Text>
+                <Text className="text-gray-600 mb-6">
+                    Hesabınızı silmek için aşağıdaki kutucuğa büyük harflerle <Text className="font-bold text-red-600">SIL</Text> yazınız.
+                </Text>
+
+                <TextInput
+                    value={confirmText}
+                    onChangeText={setConfirmText}
+                    className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-lg font-bold text-center mb-6"
+                    placeholder="SIL"
+                    autoCapitalize="characters"
+                />
+
+                <View className="flex-row gap-4">
+                    <TouchableOpacity
+                        onPress={onClose}
+                        className="flex-1 bg-gray-100 py-3 rounded-xl items-center"
+                    >
+                        <Text className="font-bold text-gray-700">Vazgeç</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        onPress={onConfirm}
+                        disabled={!isMatch}
+                        className={`flex-1 py-3 rounded-xl items-center ${isMatch ? 'bg-red-600' : 'bg-gray-200'}`}
+                    >
+                        <Text className={`font-bold ${isMatch ? 'text-white' : 'text-gray-400'}`}>
+                            Hesabı Sil
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
+        </View>
     );
 }

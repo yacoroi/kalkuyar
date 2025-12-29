@@ -14,15 +14,29 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.kalkuyar.app",
+      "buildNumber": "1",
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "Profil fotoğrafınızı değiştirmek için fotoğraf galerinize erişim gereklidir.",
+        "NSCameraUsageDescription": "Profil fotoğrafı çekmek için kamera erişimi gereklidir.",
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
+      "package": "com.kalkuyar.app",
+      "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -35,10 +49,23 @@
       "backgroundColor": "#ffffff"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Profil fotoğrafınızı değiştirmek için fotoğraf galerinize erişim gereklidir."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "privacyPolicyUrl": "https://kalkuyar.com/gizlilik",
+      "router": {},
+      "eas": {
+        "projectId": "ea9ab9eb-7252-44aa-84b8-6a3e19d91763"
+      }
     }
   }
 }
