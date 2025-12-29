@@ -3,6 +3,7 @@
 import { DISTRICTS, getNeighborhoods } from "@/lib/locations";
 import { supabase } from "@/lib/supabase";
 import { Award, MapPin, Phone, Search, User } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 interface AdminProfile {
@@ -125,7 +126,7 @@ export default function UsersPage() {
             {/* Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 {filteredUsers.map((user) => (
-                    <div key={user.id} className="bg-white p-6 rounded-2xl shadow-[0_2px_10px_rgba(0,0,0,0.03)] border border-gray-100 group hover:border-gray-200 transition-all flex flex-col gap-4">
+                    <Link href={`/users/${user.id}`} key={user.id} className="bg-white p-6 rounded-2xl shadow-[0_2px_10px_rgba(0,0,0,0.03)] border border-gray-100 group hover:border-red-200 hover:shadow-md transition-all flex flex-col gap-4 cursor-pointer">
 
                         {/* Top: Profile */}
                         <div className="flex justify-between items-start">
@@ -182,7 +183,7 @@ export default function UsersPage() {
                                 <span className="text-gray-400 text-xs italic">İlgi alanı belirtilmemiş</span>
                             )}
                         </div>
-                    </div>
+                    </Link>
                 ))}
             </div>
 
