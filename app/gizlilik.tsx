@@ -13,7 +13,7 @@ export default function PrivacyPolicyScreen() {
                 </Text>
 
                 <Text style={{ fontSize: 12, color: '#6b7280', marginBottom: 20 }}>
-                    Son Güncelleme: 29 Aralık 2024
+                    Son Güncelleme: 30 Aralık 2025
                 </Text>
 
                 <View style={{ marginBottom: 24 }}>
@@ -24,7 +24,7 @@ export default function PrivacyPolicyScreen() {
                         KalkUyar uygulaması aşağıdaki verileri toplamaktadır:{'\n\n'}
                         • Ad Soyad{'\n'}
                         • Telefon Numarası{'\n'}
-                        • TC Kimlik Numarası (isteğe bağlı){'\n'}
+                        • TC Kimlik Numarası{' '}
                         • Konum Bilgisi (İl, İlçe, Mahalle){'\n'}
                         • Profil Fotoğrafı (isteğe bağlı){'\n'}
                         • Uygulama Kullanım Verileri
