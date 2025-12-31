@@ -272,8 +272,22 @@ export default function CreateReportScreen() {
                                     ))}
                                 </select>
                             </View>
+                        ) : Platform.OS === 'android' ? (
+                            /* Android: Inline native dropdown */
+                            <View style={{ backgroundColor: '#f3f4f6', borderRadius: 12, borderWidth: 1, borderColor: '#e5e7eb' }}>
+                                <Picker
+                                    selectedValue={peopleCount}
+                                    onValueChange={(value) => setPeopleCount(value)}
+                                    style={{ height: 50, color: '#333' }}
+                                    dropdownIconColor="#6b7280"
+                                >
+                                    {NUMBER_OPTIONS.map((num) => (
+                                        <Picker.Item key={num} label={`${num} kişi`} value={num} />
+                                    ))}
+                                </Picker>
+                            </View>
                         ) : (
-                            /* Native: Tappable field + Modal Picker */
+                            /* iOS: Tappable field + Modal Wheel Picker */
                             <>
                                 <Pressable
                                     onPress={() => setShowPeopleCountPicker(true)}
@@ -304,20 +318,21 @@ export default function CreateReportScreen() {
                                         <View style={{ backgroundColor: '#fff', borderTopLeftRadius: 20, borderTopRightRadius: 20 }}>
                                             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16, borderBottomWidth: 1, borderBottomColor: '#e5e7eb' }}>
                                                 <Pressable onPress={() => setShowPeopleCountPicker(false)}>
-                                                    <Text style={{ fontSize: 17, color: '#6b7280' }}>Cancel</Text>
+                                                    <Text style={{ fontSize: 17, color: '#6b7280' }}>İptal</Text>
                                                 </Pressable>
                                                 <Text style={{ fontSize: 17, fontWeight: '600', color: '#333' }}>Kişi Sayısı</Text>
                                                 <Pressable onPress={() => setShowPeopleCountPicker(false)}>
-                                                    <Text style={{ fontSize: 17, color: '#ea2a33', fontWeight: '600' }}>Done</Text>
+                                                    <Text style={{ fontSize: 17, color: '#ea2a33', fontWeight: '600' }}>Tamam</Text>
                                                 </Pressable>
                                             </View>
                                             <Picker
                                                 selectedValue={peopleCount}
                                                 onValueChange={(value) => setPeopleCount(value)}
                                                 style={{ height: 220 }}
+                                                itemStyle={{ color: '#333', fontSize: 22 }}
                                             >
                                                 {NUMBER_OPTIONS.map((num) => (
-                                                    <Picker.Item key={num} label={num} value={num} />
+                                                    <Picker.Item key={num} label={`${num} kişi`} value={num} color="#333" />
                                                 ))}
                                             </Picker>
                                         </View>

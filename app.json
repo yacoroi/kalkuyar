@@ -16,7 +16,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.kalkuyar.app",
-      "buildNumber": "1",
+      "buildNumber": "3",
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "Profil fotoğrafınızı değiştirmek için fotoğraf galerinize erişim gereklidir.",
         "NSCameraUsageDescription": "Profil fotoğrafı çekmek için kamera erişimi gereklidir.",
@@ -25,7 +25,7 @@
     },
     "android": {
       "package": "com.kalkuyar.app",
-      "versionCode": 1,
+      "versionCode": 3,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -33,6 +33,9 @@
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "permissions": [
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.RECORD_AUDIO",
         "android.permission.READ_EXTERNAL_STORAGE",
         "android.permission.WRITE_EXTERNAL_STORAGE",
         "android.permission.RECORD_AUDIO"
@@ -55,6 +58,14 @@
         {
           "photosPermission": "Profil fotoğrafınızı değiştirmek için fotoğraf galerinize erişim gereklidir."
         }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/icon.png",
+          "color": "#ea2a33",
+          "sounds": []
+        }
       ]
     ],
     "experiments": {
@@ -66,6 +77,12 @@
       "eas": {
         "projectId": "ea9ab9eb-7252-44aa-84b8-6a3e19d91763"
       }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/ea9ab9eb-7252-44aa-84b8-6a3e19d91763"
     }
   }
 }

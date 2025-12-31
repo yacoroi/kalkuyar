@@ -189,7 +189,7 @@ export default function ProfileScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-background-light">
-      <WebPullToRefresh onRefresh={onRefresh} refreshing={refreshing} contentContainerStyle={{ paddingBottom: 24 }}>
+      <WebPullToRefresh onRefresh={onRefresh} refreshing={refreshing} contentContainerStyle={{ paddingBottom: 100 }}>
         <View style={isDesktop ? { maxWidth: 800, alignSelf: 'center', width: '100%' } : undefined}>
           {/* HEADER */}
           <View className="px-4 py-4 border-b border-gray-200 sticky top-0 bg-background-light z-10 flex-row items-center justify-between">

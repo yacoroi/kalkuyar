@@ -343,7 +343,7 @@ export default function DashboardScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-background-light" edges={['left', 'right', 'bottom']}>
-      <WebPullToRefresh onRefresh={onRefresh} refreshing={refreshing} contentContainerStyle={{ paddingBottom: 20 }}>
+      <WebPullToRefresh onRefresh={onRefresh} refreshing={refreshing} contentContainerStyle={{ paddingBottom: 100 }}>
         {/* DESKTOP HEADER - Simple title since sidebar has user info */}
         {isDesktop && (
           <View style={{ paddingHorizontal: 32, paddingTop: 24, paddingBottom: 16 }}>

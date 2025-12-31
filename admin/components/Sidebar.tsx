@@ -1,7 +1,7 @@
 'use client';
 
 import { logout } from '@/actions/auth';
-import { Award, BookOpen, ClipboardList, FileText, LayoutDashboard, LogOut, Mail, MessageSquare, Newspaper, Users, Video } from 'lucide-react';
+import { Award, Bell, BookOpen, ClipboardList, FileText, LayoutDashboard, LogOut, Mail, MessageSquare, Newspaper, Users, Video } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -64,6 +64,16 @@ export default function Sidebar() {
                 >
                     <Mail size={20} />
                     <span className="font-medium">Geri Bildirim Kutusu</span>
+                </Link>
+                <Link
+                    href="/notifications"
+                    className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${pathname === '/notifications'
+                        ? 'bg-red-50 text-red-600 shadow-sm shadow-red-100'
+                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                        }`}
+                >
+                    <Bell size={20} />
+                    <span className="font-medium">Push Bildirimler</span>
                 </Link>
             </nav>
 

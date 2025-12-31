@@ -49,17 +49,33 @@ export default function TabLayout() {
         tabBarInactiveTintColor: '#9ca3af',
         tabBarShowLabel: true,
         tabBarStyle: isDesktop ? { display: 'none' } : {
-          backgroundColor: '#ffffff',
+          backgroundColor: 'transparent',
           borderTopWidth: 0,
-          elevation: 10,
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: -2 },
-          shadowOpacity: 0.1,
-          shadowRadius: 4,
+          elevation: 0,
+          shadowOpacity: 0,
           height: 60 + (insets.bottom > 0 ? insets.bottom : 10),
           paddingBottom: insets.bottom > 0 ? insets.bottom : 10,
           paddingTop: 8,
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
         },
+        tabBarBackground: () => (
+          <View style={{
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: 60 + (insets.bottom > 0 ? insets.bottom : 10),
+            backgroundColor: '#ffffff',
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: -2 },
+            shadowOpacity: 0.1,
+            shadowRadius: 4,
+            elevation: 10,
+          }} />
+        ),
         headerStyle: {
           backgroundColor: '#ffffff',
           borderBottomWidth: 0,
@@ -119,6 +135,7 @@ export default function TabLayout() {
               shadowOffset: { width: 0, height: 4 },
               shadowOpacity: 0.3,
               shadowRadius: 4,
+              zIndex: 10,
             }}>
               <Animated.View style={{ transform: [{ rotate }] }}>
                 <FontAwesome name="plus" size={24} color="#ffffff" />

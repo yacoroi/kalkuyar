@@ -4,10 +4,18 @@ import { useFonts } from 'expo-font';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
+import { Platform } from 'react-native';
 import 'react-native-reanimated';
 import PwaInstallPrompt from '../components/PwaInstallPrompt';
 import '../global.css'; // Import NativeWind global styles
 import { supabase } from '../lib/supabase';
+import {
+  registerForPushNotificationsAsync,
+  savePushToken,
+  setupAndroidChannel,
+  setupNotificationListeners,
+  updateLastActive
+} from '../services/notifications';
 import { useAuthStore } from '../stores/useAuthStore';
 
 import { useColorScheme } from '@/components/useColorScheme';
@@ -49,7 +57,7 @@ export default function RootLayout() {
     ...FontAwesome.font,
   });
 
-  const { session, setSession, loading: authLoading, profile } = useAuthStore();
+  const { session, setSession, loading: authLoading, profile, user } = useAuthStore();
   const segments = useSegments();
   const router = useRouter();
 
@@ -72,6 +80,61 @@ export default function RootLayout() {
 
     return () => subscription.unsubscribe();
   }, []);
+
+  // Setup push notifications
+  useEffect(() => {
+    if (Platform.OS === 'web') return; // Skip on web
+
+    // Setup Android notification channel
+    setupAndroidChannel();
+
+    // Setup notification listeners
+    const cleanup = setupNotificationListeners(
+      (notification) => {
+        console.log('Received notification:', notification.request.content.title);
+      },
+      (response) => {
+        // Handle notification tap - can navigate to specific screen based on data
+        const data = response.notification.request.content.data;
+        if (data?.screen) {
+          router.push(data.screen as any);
+        }
+      }
+    );
+
+    return cleanup;
+  }, []);
+
+  // Register push token when user is authenticated
+  useEffect(() => {
+    if (Platform.OS === 'web') return;
+    if (!user?.id || !profile) return;
+
+    async function setupPushToken() {
+      const token = await registerForPushNotificationsAsync();
+      if (token && user?.id) {
+        await savePushToken(user.id, token);
+      }
+    }
+
+    setupPushToken();
+  }, [user?.id, profile]);
+
+  // Update last_active_at periodically
+  useEffect(() => {
+    if (Platform.OS === 'web') return;
+    if (!user?.id) return;
+
+    // Update on app start
+    updateLastActive(user.id);
+
+    // Update every 5 minutes while app is open
+    const interval = setInterval(() => {
+      updateLastActive(user.id);
+    }, 5 * 60 * 1000);
+
+    return () => clearInterval(interval);
+  }, [user?.id]);
 
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {

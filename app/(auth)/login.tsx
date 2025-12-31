@@ -5,6 +5,8 @@ import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
 import { useScaleFont } from '../../hooks/useScaleFont';
 import { supabase } from '../../lib/supabase';
 
+const OTP_COOLDOWN_SECONDS = 180; // 3 minutes
+
 export default function LoginScreen() {
     const [phone, setPhone] = useState('');
     const [loading, setLoading] = useState(false);
@@ -19,6 +21,7 @@ export default function LoginScreen() {
         }
 
         setLoading(true);
+
         // Clean phone number and add +90 if missing
         let formattedPhone = phone.replace(/\D/g, ''); // Remove non-digits
         if (formattedPhone.startsWith('90')) {
@@ -29,6 +32,27 @@ export default function LoginScreen() {
             formattedPhone = '+90' + formattedPhone;
         }
 
+        // Check if we already sent OTP recently (from otp_requests table)
+        const { data: existingRequest } = await supabase
+            .from('otp_requests')
+            .select('sent_at')
+            .eq('phone', formattedPhone)
+            .single();
+
+        if (existingRequest?.sent_at) {
+            const sentAt = new Date(existingRequest.sent_at).getTime();
+            const now = Date.now();
+            const elapsedSeconds = Math.floor((now - sentAt) / 1000);
+            const remainingSeconds = OTP_COOLDOWN_SECONDS - elapsedSeconds;
+
+            if (remainingSeconds > 0) {
+                setLoading(false);
+                // Mevcut kod hala geçerli, direkt verify ekranına yönlendir
+                router.push(`/verify?phone=${encodeURIComponent(formattedPhone)}`);
+                return;
+            }
+        }
+
         console.log('Sending OTP to:', formattedPhone);
 
         const { data, error } = await supabase.auth.signInWithOtp({
@@ -37,10 +61,17 @@ export default function LoginScreen() {
 
         console.log('OTP Response:', { data, error });
 
+        // Upsert OTP request timestamp (phone is primary key, so it will update if exists)
+        await supabase
+            .from('otp_requests')
+            .upsert(
+                { phone: formattedPhone, sent_at: new Date().toISOString() },
+                { onConflict: 'phone' }
+            );
+
         setLoading(false);
 
         // SMS gönderildi, hatadan bağımsız doğrulama ekranına git
-        // (Supabase bazen SMS gönderse bile 422 dönebiliyor)
         if (error) {
             console.warn('OTP Warning:', error.message, '- Proceeding to verify anyway');
         }
